@@ -31,9 +31,9 @@
 			this.guna2ContextMenuStrip1 = new Guna.UI2.WinForms.Guna2ContextMenuStrip();
 			this.lblSearch = new System.Windows.Forms.Label();
 			this.lblHeader = new System.Windows.Forms.Label();
-			this.btnAdd = new Guna.UI2.WinForms.Guna2ImageButton();
 			this.guna2Separator1 = new Guna.UI2.WinForms.Guna2Separator();
 			this.txtSearch = new Guna.UI2.WinForms.Guna2TextBox();
+			this.btnAdd = new Guna.UI2.WinForms.Guna2ImageButton();
 			this.SuspendLayout();
 			// 
 			// guna2ContextMenuStrip1
@@ -64,31 +64,15 @@
 			// 
 			this.lblHeader.AutoSize = true;
 			this.lblHeader.Font = new System.Drawing.Font("Segoe UI", 14F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-			this.lblHeader.Location = new System.Drawing.Point(40, 36);
+			this.lblHeader.Location = new System.Drawing.Point(40, 34);
 			this.lblHeader.Name = "lblHeader";
 			this.lblHeader.Size = new System.Drawing.Size(80, 25);
 			this.lblHeader.TabIndex = 3;
 			this.lblHeader.Text = "Hearder";
 			// 
-			// btnAdd
-			// 
-			this.btnAdd.CheckedState.ImageSize = new System.Drawing.Size(64, 64);
-			this.btnAdd.HoverState.ImageSize = new System.Drawing.Size(57, 57);
-			this.btnAdd.Image = global::Restourant_Adisyon.Properties.Resources._6537790;
-			this.btnAdd.ImageOffset = new System.Drawing.Point(0, 0);
-			this.btnAdd.ImageRotate = 0F;
-			this.btnAdd.ImageSize = new System.Drawing.Size(55, 55);
-			this.btnAdd.IndicateFocus = true;
-			this.btnAdd.Location = new System.Drawing.Point(45, 78);
-			this.btnAdd.Name = "btnAdd";
-			this.btnAdd.PressedState.ImageSize = new System.Drawing.Size(55, 55);
-			this.btnAdd.Size = new System.Drawing.Size(64, 54);
-			this.btnAdd.TabIndex = 5;
-			this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
-			// 
 			// guna2Separator1
 			// 
-			this.guna2Separator1.Location = new System.Drawing.Point(28, 207);
+			this.guna2Separator1.Location = new System.Drawing.Point(28, 185);
 			this.guna2Separator1.Name = "guna2Separator1";
 			this.guna2Separator1.Size = new System.Drawing.Size(885, 10);
 			this.guna2Separator1.TabIndex = 6;
@@ -114,6 +98,22 @@
 			this.txtSearch.TabIndex = 7;
 			this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
 			// 
+			// btnAdd
+			// 
+			this.btnAdd.CheckedState.ImageSize = new System.Drawing.Size(64, 64);
+			this.btnAdd.HoverState.ImageSize = new System.Drawing.Size(57, 57);
+			this.btnAdd.Image = global::Restourant_Adisyon.Properties.Resources._6537790;
+			this.btnAdd.ImageOffset = new System.Drawing.Point(0, 0);
+			this.btnAdd.ImageRotate = 0F;
+			this.btnAdd.ImageSize = new System.Drawing.Size(55, 55);
+			this.btnAdd.IndicateFocus = true;
+			this.btnAdd.Location = new System.Drawing.Point(45, 78);
+			this.btnAdd.Name = "btnAdd";
+			this.btnAdd.PressedState.ImageSize = new System.Drawing.Size(55, 55);
+			this.btnAdd.Size = new System.Drawing.Size(64, 54);
+			this.btnAdd.TabIndex = 5;
+			this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
+			// 
 			// SampleView
 			// 
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
@@ -126,7 +126,7 @@
 			this.Controls.Add(this.lblSearch);
 			this.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-			this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+			this.Margin = new System.Windows.Forms.Padding(4);
 			this.Name = "SampleView";
 			this.Text = "SampleView";
 			this.ResumeLayout(false);

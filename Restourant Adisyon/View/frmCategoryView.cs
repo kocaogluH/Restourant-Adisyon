@@ -8,25 +8,25 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Restourant_Adisyon
+namespace Restourant_Adisyon.View
 {
-	public partial class SampleView : Form
+	public partial class frmCategoryView : SampleView
 	{
-		public SampleView()
+		public frmCategoryView()
 		{
 			InitializeComponent();
 		}
 
-		public virtual void btnAdd_Click(object sender, EventArgs e)
+
+
+		public override void btnAdd_Click(object sender, EventArgs e)
 		{
 
 		}
 
-		public virtual void txtSearch_TextChanged(object sender, EventArgs e)
+		public override void txtSearch_TextChanged(object sender, EventArgs e)
 		{
 
 		}
-
-		
 	}
 }
