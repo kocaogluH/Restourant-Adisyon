@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Guna.UI2.WinForms;
 
 namespace Restourant_Adisyon
 {
@@ -15,6 +16,7 @@ namespace Restourant_Adisyon
 		public formMain()
 		{
 			InitializeComponent();
+			this.StartPosition = FormStartPosition.CenterScreen;
 		}
 
 

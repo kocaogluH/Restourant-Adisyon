@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Guna.UI2.WinForms;
 
 namespace Restourant_Adisyon
 {
@@ -15,6 +16,14 @@ namespace Restourant_Adisyon
 		public frmHome()
 		{
 			InitializeComponent();
+			this.StartPosition = FormStartPosition.CenterScreen;
+			this.Dock = DockStyle.Fill;
+		}
+
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+			// Form yüklendiğinde yapılacak işlemler
 		}
 	}
 }
