@@ -1,6 +1,6 @@
 ﻿namespace Restourant_Adisyon
 {
-	partial class Form1
+	partial class frmLogin
 	{
 		/// <summary>
 		///Gerekli tasarımcı değişkeni.

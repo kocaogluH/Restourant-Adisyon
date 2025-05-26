@@ -113,6 +113,16 @@ namespace Restourant_Adisyon.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap türünde yerelleştirilmiş bir kaynak arar.
         /// </summary>
+        internal static System.Drawing.Bitmap Ekran_görüntüsü_2025_05_22_151725 {
+            get {
+                object obj = ResourceManager.GetObject("Ekran görüntüsü 2025-05-22 151725", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap türünde yerelleştirilmiş bir kaynak arar.
+        /// </summary>
         internal static System.Drawing.Bitmap images {
             get {
                 object obj = ResourceManager.GetObject("images", resourceCulture);
@@ -263,6 +273,16 @@ namespace Restourant_Adisyon.Properties {
         /// <summary>
         ///   System.Drawing.Bitmap türünde yerelleştirilmiş bir kaynak arar.
         /// </summary>
+        internal static System.Drawing.Bitmap png_clipart_black_fountain_pen_nib_pen_detail_objects_pen1 {
+            get {
+                object obj = ResourceManager.GetObject("png-clipart-black-fountain-pen-nib-pen-detail-objects-pen1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap türünde yerelleştirilmiş bir kaynak arar.
+        /// </summary>
         internal static System.Drawing.Bitmap png_clipart_ellipsis_computer_icons_punctuation_others_purple_blue {
             get {
                 object obj = ResourceManager.GetObject("png-clipart-ellipsis-computer-icons-punctuation-others-purple-blue", resourceCulture);
@@ -277,6 +297,17 @@ namespace Restourant_Adisyon.Properties {
             get {
                 object obj = ResourceManager.GetObject("png-transparent-green-trash-bin-illustration-recycling-bin-waste-container-recycl" +
                         "e-bin-rectangle-recycling-waste", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   System.Drawing.Bitmap türünde yerelleştirilmiş bir kaynak arar.
+        /// </summary>
+        internal static System.Drawing.Bitmap png_transparent_green_trash_bin_illustration_recycling_bin_waste_container_recycle_bin_rectangle_recycling_waste1 {
+            get {
+                object obj = ResourceManager.GetObject("png-transparent-green-trash-bin-illustration-recycling-bin-waste-container-recycl" +
+                        "e-bin-rectangle-recycling-waste1", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
