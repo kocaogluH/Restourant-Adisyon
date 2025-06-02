@@ -15,27 +15,14 @@ namespace Restourant_Adisyon
         public SampleAdd()
         {
             InitializeComponent();
-            EnableControls();
-            label1.BringToFront();
-            guna2Panel1.BringToFront();
         }
 
-        protected virtual void EnableControls()
+        public virtual void btnSave_Click(object sender, EventArgs e)
         {
-            // Tüm kontrolleri aktif hale getir
-            if (guna2Panel1 != null) guna2Panel1.Enabled = true;
-            if (guna2Panel2 != null) guna2Panel2.Enabled = true;
-            if (label1 != null) label1.Enabled = true;
-            if (btnSave != null) btnSave.Enabled = true;
-            if (btnClose != null) btnClose.Enabled = true;
-            if (guna2PictureBox1 != null) guna2PictureBox1.Enabled = true;
+
         }
 
-        protected virtual void btnSave_Click(object sender, EventArgs e)
-        {
-        }
-
-        protected virtual void btnClose_Click(object sender, EventArgs e)
+        public virtual void btnClose_Click(object sender, EventArgs e)
         {
             this.Close();
         }

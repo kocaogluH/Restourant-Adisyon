@@ -1,4 +1,12 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Restourant_Adisyon.Mmodel
@@ -8,31 +16,32 @@ namespace Restourant_Adisyon.Mmodel
         public frmCategoryAdd()
         {
             InitializeComponent();
-            base.InitializeComponent();
-            label1.Text = "Kategori Ekle";
-            btnSave.Text = "KAYDET";
-            btnClose.Text = "KAPAT";
         }
 
-        protected override void btnSave_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Kaydet butonuna tıklandı!");
-        }
 
-        protected override void btnClose_Click(object sender, EventArgs e)
+        public int id = 0;
+        public override void btnSave_Click(object sender, EventArgs e)
         {
-            this.Close();
-        }
+            String qry = "";
 
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            base.OnMouseDown(e);
-            if (e.Button == MouseButtons.Left)
+            if (id == 0)
             {
-                this.Capture = false;
-                Message msg = Message.Create(this.Handle, 0XA1, new IntPtr(2), IntPtr.Zero);
-                this.WndProc(ref msg);
+                qry = "Insert into category Values (@Name)";
             }
-        }
+            else
+            {
+                qry = "Update category Set cataName = @Name where catID = @id ";
+            }
+            Hashtable ht = new Hashtable();
+            ht.Add("@id", id);
+            ht.Add("@Name", txtName.Text);
+
+            if (MainClass.Sql(qry, ht) > 0)
+            {
+                MessageBox.Show("Saved successfully..");
+                id= 0;
+                txtName.Focus();
+            }
+        } 
     }
 }

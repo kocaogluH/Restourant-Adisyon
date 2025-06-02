@@ -346,7 +346,9 @@
   <ItemGroup>
     <None Include="Resources\png-transparent-green-trash-bin-illustration-recycling-bin-waste-container-recycle-bin-rectangle-recycling-waste.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\png-clipart-ellipsis-computer-icons-punctuation-others-purple-blue1.png" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\png-clipart-black-fountain-pen-nib-pen-detail-objects-pen1.png" />
   </ItemGroup>
@@ -355,6 +357,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Ekran görüntüsü 2025-05-22 151725.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\png-clipart-ellipsis-computer-icons-punctuation-others-purple-blue2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\png-clipart-ellipsis-computer-icons-punctuation-others-purple-blue3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\png-clipart-ellipsis-computer-icons-punctuation-others-purple-blue4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\images %283%292.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\png-clipart-ellipsis-computer-icons-punctuation-others-purple-blue5.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Data.SqlClient.SNI.6.0.2\build\net462\Microsoft.Data.SqlClient.SNI.targets" Condition="Exists('..\packages\Microsoft.Data.SqlClient.SNI.6.0.2\build\net462\Microsoft.Data.SqlClient.SNI.targets')" />

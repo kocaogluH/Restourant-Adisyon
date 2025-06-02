@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Restourant_Adisyon.Vview;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -45,5 +46,10 @@ namespace Restourant_Adisyon
 		{
 			AddControls(new frmHome());
 		}
-	}
+
+        private void btnCatagories_Click(object sender, EventArgs e)
+        {
+            AddControls(new frmCategoryview());
+        }
+    }
 }
