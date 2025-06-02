@@ -35,13 +35,15 @@
             this.dataGridViewImageColumn2 = new System.Windows.Forms.DataGridViewImageColumn();
             this.btnAdd = new Guna.UI2.WinForms.Guna2ImageButton();
             this.txtSearch = new Guna.UI2.WinForms.Guna2TextBox();
+            this.guna2MessageDialog1 = new Guna.UI2.WinForms.Guna2MessageDialog();
             this.SuspendLayout();
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("Segoe UI", 11.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(162)));
-            this.label1.Location = new System.Drawing.Point(392, 95);
+            this.label1.Location = new System.Drawing.Point(424, 95);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(53, 20);
             this.label1.TabIndex = 1;
@@ -59,9 +61,11 @@
             // 
             // guna2Separator1
             // 
+            this.guna2Separator1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.guna2Separator1.Location = new System.Drawing.Point(21, 176);
             this.guna2Separator1.Name = "guna2Separator1";
-            this.guna2Separator1.Size = new System.Drawing.Size(717, 26);
+            this.guna2Separator1.Size = new System.Drawing.Size(749, 26);
             this.guna2Separator1.TabIndex = 4;
             // 
             // dataGridViewImageColumn1
@@ -104,6 +108,7 @@
             // 
             // txtSearch
             // 
+            this.txtSearch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.txtSearch.BackColor = System.Drawing.Color.White;
             this.txtSearch.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Stretch;
             this.txtSearch.Cursor = System.Windows.Forms.Cursors.IBeam;
@@ -116,7 +121,7 @@
             this.txtSearch.Font = new System.Drawing.Font("Segoe UI", 9.75F);
             this.txtSearch.HoverState.BorderColor = System.Drawing.Color.FromArgb(((int)(((byte)(94)))), ((int)(((byte)(148)))), ((int)(((byte)(255)))));
             this.txtSearch.IconLeft = global::Restourant_Adisyon.Properties.Resources.png_transparent_posizionamento_search_engine_optimization_search_engine_indexing_ecmedia_web_graphics_digital_agency_world_wide_web1;
-            this.txtSearch.Location = new System.Drawing.Point(391, 120);
+            this.txtSearch.Location = new System.Drawing.Point(423, 120);
             this.txtSearch.Name = "txtSearch";
             this.txtSearch.PlaceholderText = "Search Here";
             this.txtSearch.SelectedText = "";
@@ -124,11 +129,20 @@
             this.txtSearch.TabIndex = 0;
             this.txtSearch.TextChanged += new System.EventHandler(this.txtSearch_TextChanged);
             // 
+            // guna2MessageDialog1
+            // 
+            this.guna2MessageDialog1.Buttons = Guna.UI2.WinForms.MessageDialogButtons.OK;
+            this.guna2MessageDialog1.Caption = "RMS";
+            this.guna2MessageDialog1.Icon = Guna.UI2.WinForms.MessageDialogIcon.Question;
+            this.guna2MessageDialog1.Parent = null;
+            this.guna2MessageDialog1.Style = Guna.UI2.WinForms.MessageDialogStyle.Light;
+            this.guna2MessageDialog1.Text = null;
+            // 
             // SampleView
             // 
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(1150, 721);
+            this.ClientSize = new System.Drawing.Size(1182, 721);
             this.Controls.Add(this.txtSearch);
             this.Controls.Add(this.guna2Separator1);
             this.Controls.Add(this.label2);
@@ -152,5 +166,6 @@
         private Guna.UI2.WinForms.Guna2Separator guna2Separator1;
         private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn1;
         private System.Windows.Forms.DataGridViewImageColumn dataGridViewImageColumn2;
+        public Guna.UI2.WinForms.Guna2MessageDialog guna2MessageDialog1;
     }
 }

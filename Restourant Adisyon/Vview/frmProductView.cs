@@ -12,34 +12,40 @@ using System.Windows.Forms;
 
 namespace Restourant_Adisyon.Vview
 {
-    public partial class frmCategoryview : SampleView
+    public partial class frmProductView : SampleView
     {
-        public frmCategoryview()
+        public frmProductView()
         {
             InitializeComponent();
         }
 
+        private void frmProductView_Load(object sender, EventArgs e)
+        {
+            GetData(); 
+        }
+
         public void GetData()
         {
-            string qry = "Select * From category where catName like '%" + txtSearch.Text + "%'";
+            string qry = "select pID,pName,pPrice,CategoryID,c.catName from products p inner join category c On c.catID = P.CategoryID  where pName like '%" + txtSearch.Text + "%'";
             ListBox lb = new ListBox();
             lb.Items.Add(dgvid);
             lb.Items.Add(dgvName);
+            lb.Items.Add(dgvPrice);
+            lb.Items.Add(dgvcatID);
+            lb.Items.Add(dgvCat);
+
 
             MainClass.LoadData(qry, guna2DataGridView1, lb);
         }
 
-        private void frmCategoryview_Load(object sender, EventArgs e)
-        {
-            GetData();
-        }
-
         public override void btnAdd_Click(object sender, EventArgs e)
         {
+            MainClass.BlurBackground(new frmProductAdd());
+
             //frmCategoryAdd frm = new frmCategoryAdd();
             //frm.ShowDialog();
 
-            MainClass.BlurBackground(new frmStaffAdd());
+
             GetData();
         }
 
@@ -54,18 +60,19 @@ namespace Restourant_Adisyon.Vview
         {
             if (guna2DataGridView1.CurrentCell.OwningColumn.Name == "dgvedit")
             {
-              
-                    frmCategoryAdd frm = new frmCategoryAdd();
-                    frm.id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
-                    frm.txtName.Text = Convert.ToString(guna2DataGridView1.CurrentRow.Cells["dgvName"].Value);
-                MainClass.BlurBackground(frm); 
-                GetData();
-                
 
-               
+                frmProductAdd frm = new frmProductAdd();
+                frm.id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
+                frm.cID = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvcatID "].Value);
+              
+                MainClass.BlurBackground(frm);
+                GetData();
+
+
+
             }
 
-            if(guna2DataGridView1.CurrentCell.OwningColumn.Name == "dgvdel")
+            if (guna2DataGridView1.CurrentCell.OwningColumn.Name == "dgvdel")
             {
                 guna2MessageDialog1.Icon = Guna.UI2.WinForms.MessageDialogIcon.Question;
                 guna2MessageDialog1.Buttons = Guna.UI2.WinForms.MessageDialogButtons.YesNo;
@@ -74,7 +81,7 @@ namespace Restourant_Adisyon.Vview
                 {
 
                     int id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
-                    string qry = "Delete from category where catID=" + id + "";
+                    string qry = "Delete from products where pID=" + id + "";
                     Hashtable ht = new Hashtable();
                     MainClass.Sql(qry, ht);
 
@@ -85,9 +92,8 @@ namespace Restourant_Adisyon.Vview
                     GetData();
                 }
 
-             
-            }
 
+            }
         }
     }
 }

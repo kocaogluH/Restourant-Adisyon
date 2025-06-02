@@ -11,26 +11,26 @@ using System.Windows.Forms;
 
 namespace Restourant_Adisyon.Mmodel
 {
-    public partial class frmCategoryAdd : SampleAdd
+    public partial class frmTableAdd : SampleAdd
     {
-        public frmCategoryAdd()
+        public frmTableAdd()
         {
             InitializeComponent();
         }
 
-
         public int id = 0;
+
         public override void btnSave_Click(object sender, EventArgs e)
         {
             String qry = "";
 
             if (id == 0)
             {
-                qry = "Insert into category Values (@Name)";
+                qry = "Insert into tables Values (@Name)";
             }
             else
             {
-                qry = "Update category Set cataName = @Name where catID = @id ";
+                qry = "Update tables Set tName = @Name where tID = @id ";
             }
             Hashtable ht = new Hashtable();
             ht.Add("@id", id);
@@ -39,9 +39,9 @@ namespace Restourant_Adisyon.Mmodel
             if (MainClass.Sql(qry, ht) > 0)
             {
                 guna2MessageDialog1.Show("Saved successfully..");
-                id= 0;
+                id = 0;
                 txtName.Focus();
             }
-        } 
+        }
     }
 }

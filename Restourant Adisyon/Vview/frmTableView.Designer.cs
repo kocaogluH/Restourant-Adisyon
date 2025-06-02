@@ -1,6 +1,6 @@
 ﻿namespace Restourant_Adisyon.Vview
 {
-    partial class frmCategoryview
+    partial class frmTableView
     {
         /// <summary>
         /// Required designer variable.
@@ -48,11 +48,6 @@
             this.btnAdd.ImageFlip = Guna.UI2.WinForms.Enums.FlipOrientation.Normal;
             this.btnAdd.PressedState.ImageSize = new System.Drawing.Size(55, 55);
             // 
-            // label2
-            // 
-            this.label2.Size = new System.Drawing.Size(121, 25);
-            this.label2.Text = "Category List";
-            // 
             // guna2DataGridView1
             // 
             this.guna2DataGridView1.AllowUserToAddRows = false;
@@ -87,12 +82,12 @@
             dataGridViewCellStyle3.WrapMode = System.Windows.Forms.DataGridViewTriState.False;
             this.guna2DataGridView1.DefaultCellStyle = dataGridViewCellStyle3;
             this.guna2DataGridView1.GridColor = System.Drawing.Color.FromArgb(((int)(((byte)(231)))), ((int)(((byte)(229)))), ((int)(((byte)(255)))));
-            this.guna2DataGridView1.Location = new System.Drawing.Point(25, 237);
+            this.guna2DataGridView1.Location = new System.Drawing.Point(21, 208);
             this.guna2DataGridView1.Name = "guna2DataGridView1";
             this.guna2DataGridView1.ReadOnly = true;
             this.guna2DataGridView1.RowHeadersVisible = false;
             this.guna2DataGridView1.Size = new System.Drawing.Size(738, 214);
-            this.guna2DataGridView1.TabIndex = 5;
+            this.guna2DataGridView1.TabIndex = 6;
             this.guna2DataGridView1.ThemeStyle.AlternatingRowsStyle.BackColor = System.Drawing.Color.White;
             this.guna2DataGridView1.ThemeStyle.AlternatingRowsStyle.Font = null;
             this.guna2DataGridView1.ThemeStyle.AlternatingRowsStyle.ForeColor = System.Drawing.Color.Empty;
@@ -163,14 +158,15 @@
             this.dgvdel.ReadOnly = true;
             this.dgvdel.Width = 50;
             // 
-            // frmCategoryview
+            // frmTableView
             // 
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-            this.ClientSize = new System.Drawing.Size(802, 480);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 17F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(800, 441);
             this.Controls.Add(this.guna2DataGridView1);
-            this.Name = "frmCategoryview";
-            this.Text = "frmCategoryview";
-            this.Load += new System.EventHandler(this.frmCategoryview_Load);
+            this.Name = "frmTableView";
+            this.Text = "frmTableView";
+            this.Load += new System.EventHandler(this.frmTableView_Load);
             this.Controls.SetChildIndex(this.btnAdd, 0);
             this.Controls.SetChildIndex(this.label2, 0);
             this.Controls.SetChildIndex(this.guna2DataGridView1, 0);
@@ -181,11 +177,12 @@
         }
 
         #endregion
+
+        public Guna.UI2.WinForms.Guna2DataGridView guna2DataGridView1;
         private System.Windows.Forms.DataGridViewTextBoxColumn dvgsno;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvid;
         private System.Windows.Forms.DataGridViewTextBoxColumn dgvName;
         private System.Windows.Forms.DataGridViewImageColumn dgvedit;
         private System.Windows.Forms.DataGridViewImageColumn dgvdel;
-        public Guna.UI2.WinForms.Guna2DataGridView guna2DataGridView1;
     }
 }

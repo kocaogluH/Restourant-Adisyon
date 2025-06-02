@@ -1,4 +1,5 @@
-﻿using Restourant_Adisyon.Mmodel;
+﻿using Guna.UI2.WinForms;
+using Restourant_Adisyon.Mmodel;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -12,16 +13,21 @@ using System.Windows.Forms;
 
 namespace Restourant_Adisyon.Vview
 {
-    public partial class frmCategoryview : SampleView
+    public partial class frmTableView : SampleView
     {
-        public frmCategoryview()
+        public frmTableView()
         {
             InitializeComponent();
         }
 
+        private void frmTableView_Load(object sender, EventArgs e)
+        {
+            GetData();
+        }
+         
         public void GetData()
         {
-            string qry = "Select * From category where catName like '%" + txtSearch.Text + "%'";
+            string qry = "Select * From tables where tName like '%" + txtSearch.Text + "%'";
             ListBox lb = new ListBox();
             lb.Items.Add(dgvid);
             lb.Items.Add(dgvName);
@@ -29,17 +35,13 @@ namespace Restourant_Adisyon.Vview
             MainClass.LoadData(qry, guna2DataGridView1, lb);
         }
 
-        private void frmCategoryview_Load(object sender, EventArgs e)
-        {
-            GetData();
-        }
 
         public override void btnAdd_Click(object sender, EventArgs e)
         {
-            //frmCategoryAdd frm = new frmCategoryAdd();
+            //frmTableAdd frm = new frmTableAdd();
             //frm.ShowDialog();
 
-            MainClass.BlurBackground(new frmStaffAdd());
+            MainClass.BlurBackground(new frmTableAdd());
             GetData();
         }
 
@@ -54,18 +56,18 @@ namespace Restourant_Adisyon.Vview
         {
             if (guna2DataGridView1.CurrentCell.OwningColumn.Name == "dgvedit")
             {
-              
-                    frmCategoryAdd frm = new frmCategoryAdd();
-                    frm.id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
-                    frm.txtName.Text = Convert.ToString(guna2DataGridView1.CurrentRow.Cells["dgvName"].Value);
-                MainClass.BlurBackground(frm); 
-                GetData();
-                
 
-               
+                frmCategoryAdd frm = new frmCategoryAdd();
+                frm.id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
+                frm.txtName.Text = Convert.ToString(guna2DataGridView1.CurrentRow.Cells["dgvName"].Value);
+                frm.ShowDialog();
+                GetData();
+
+
+
             }
 
-            if(guna2DataGridView1.CurrentCell.OwningColumn.Name == "dgvdel")
+            if (guna2DataGridView1.CurrentCell.OwningColumn.Name == "dgvdel")
             {
                 guna2MessageDialog1.Icon = Guna.UI2.WinForms.MessageDialogIcon.Question;
                 guna2MessageDialog1.Buttons = Guna.UI2.WinForms.MessageDialogButtons.YesNo;
@@ -74,7 +76,7 @@ namespace Restourant_Adisyon.Vview
                 {
 
                     int id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
-                    string qry = "Delete from category where catID=" + id + "";
+                    string qry = "Delete from tables where tID=" + id + "";
                     Hashtable ht = new Hashtable();
                     MainClass.Sql(qry, ht);
 
@@ -85,7 +87,7 @@ namespace Restourant_Adisyon.Vview
                     GetData();
                 }
 
-             
+
             }
 
         }

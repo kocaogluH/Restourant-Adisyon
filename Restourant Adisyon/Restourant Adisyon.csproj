@@ -193,6 +193,48 @@
     <Compile Include="Mmodel\frmCategoryAdd.Designer.cs">
       <DependentUpon>frmCategoryAdd.cs</DependentUpon>
     </Compile>
+    <Compile Include="Mmodel\frmPOS.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Mmodel\frmPOS.Designer.cs">
+      <DependentUpon>frmPOS.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Mmodel\frmProductAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Mmodel\frmProductAdd.Designer.cs">
+      <DependentUpon>frmProductAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Mmodel\frmStaffAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Mmodel\frmStaffAdd.Designer.cs">
+      <DependentUpon>frmStaffAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Mmodel\frmTableAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Mmodel\frmTableAdd.Designer.cs">
+      <DependentUpon>frmTableAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Mmodel\frmTableSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Mmodel\frmTableSelect.Designer.cs">
+      <DependentUpon>frmTableSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Mmodel\frmWaiterSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Mmodel\frmWaiterSelect.Designer.cs">
+      <DependentUpon>frmWaiterSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Mmodel\ucProduct.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Mmodel\ucProduct.Designer.cs">
+      <DependentUpon>ucProduct.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RMDataSet.Designer.cs">
@@ -218,6 +260,24 @@
     <Compile Include="Vview\frmCategoryview.Designer.cs">
       <DependentUpon>frmCategoryview.cs</DependentUpon>
     </Compile>
+    <Compile Include="Vview\frmProductView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Vview\frmProductView.Designer.cs">
+      <DependentUpon>frmProductView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vview\frmStaffView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Vview\frmStaffView.Designer.cs">
+      <DependentUpon>frmStaffView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Vview\frmTableView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Vview\frmTableView.Designer.cs">
+      <DependentUpon>frmTableView.cs</DependentUpon>
+    </Compile>
     <EmbeddedResource Include="frmLogin.resx">
       <DependentUpon>frmLogin.cs</DependentUpon>
     </EmbeddedResource>
@@ -229,6 +289,27 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Mmodel\frmCategoryAdd.resx">
       <DependentUpon>frmCategoryAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Mmodel\frmPOS.resx">
+      <DependentUpon>frmPOS.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Mmodel\frmProductAdd.resx">
+      <DependentUpon>frmProductAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Mmodel\frmStaffAdd.resx">
+      <DependentUpon>frmStaffAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Mmodel\frmTableAdd.resx">
+      <DependentUpon>frmTableAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Mmodel\frmTableSelect.resx">
+      <DependentUpon>frmTableSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Mmodel\frmWaiterSelect.resx">
+      <DependentUpon>frmWaiterSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Mmodel\ucProduct.resx">
+      <DependentUpon>ucProduct.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -248,6 +329,15 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Vview\frmCategoryview.resx">
       <DependentUpon>frmCategoryview.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vview\frmProductView.resx">
+      <DependentUpon>frmProductView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vview\frmStaffView.resx">
+      <DependentUpon>frmStaffView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Vview\frmTableView.resx">
+      <DependentUpon>frmTableView.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
@@ -346,7 +436,9 @@
   <ItemGroup>
     <None Include="Resources\png-transparent-green-trash-bin-illustration-recycling-bin-waste-container-recycle-bin-rectangle-recycling-waste.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\png-clipart-ellipsis-computer-icons-punctuation-others-purple-blue1.png" />
+  </ItemGroup>
   <ItemGroup>
     <None Include="Resources\png-clipart-black-fountain-pen-nib-pen-detail-objects-pen1.png" />
   </ItemGroup>
@@ -355,6 +447,48 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\Ekran görüntüsü 2025-05-22 151725.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\png-clipart-ellipsis-computer-icons-punctuation-others-purple-blue2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\png-clipart-ellipsis-computer-icons-punctuation-others-purple-blue3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\png-clipart-ellipsis-computer-icons-punctuation-others-purple-blue4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\images %283%292.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\png-clipart-ellipsis-computer-icons-punctuation-others-purple-blue5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\images %283%29.jpeg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\images %283%291.jpeg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\images %281%291.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\productPic.jpeg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\pos.jpeg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\çatal kaşık.jpeg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\powerr.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\biryani.jpeg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\61305071.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Data.SqlClient.SNI.6.0.2\build\net462\Microsoft.Data.SqlClient.SNI.targets" Condition="Exists('..\packages\Microsoft.Data.SqlClient.SNI.6.0.2\build\net462\Microsoft.Data.SqlClient.SNI.targets')" />
