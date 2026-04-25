@@ -1,4 +1,4 @@
-﻿using Restourant_Adisyon.Mmodel;
+using Restourant_Adisyon.Mmodel;
 using Restourant_Adisyon.Vview;
 using System;
 using System.Collections.Generic;
@@ -46,6 +46,15 @@ namespace Restourant_Adisyon
 		{
 			lblUser.Text = MainClass.USER;
 			_obj = this;
+			btnHome_Click(null, null);
+
+			// Role Based Access Control
+			if (MainClass.ROLE != "Admin")
+			{
+				btnCatagories.Visible = false;
+				btnProducts.Visible = false;
+				btnStaff.Visible = false;
+			}
 		}
 
 		private void btnHome_Click(object sender, EventArgs e)
@@ -78,6 +87,26 @@ namespace Restourant_Adisyon
 			//AddControls(new frmPOS());
 			frmPOS frm = new frmPOS();
 			frm.Show();
+        }
+
+        private void btnKitchen_Click(object sender, EventArgs e)
+        {
+            AddControls(new frmKitchenView());
+        }
+
+        private void btnService_Click(object sender, EventArgs e)
+        {
+            AddControls(new frmWaiterView());
+        }
+
+        private void btnReports_Click(object sender, EventArgs e)
+        {
+            AddControls(new frmReports());
+        }
+
+        private void btnInventory_Click(object sender, EventArgs e)
+        {
+            AddControls(new frmInventory());
         }
     }
 }

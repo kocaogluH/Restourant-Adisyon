@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -31,19 +31,47 @@ namespace Restourant_Adisyon.Mmodel
 
             foreach (DataRow row in dt.Rows)
             {
+                string tname = row["tname"].ToString();
                 Guna.UI2.WinForms.Guna2Button b = new Guna.UI2.WinForms.Guna2Button();
-                b.Text = row["tname"].ToString();
-                b.Width = 510;
-                b.Height = 50;
-                b.FillColor = Color.FromArgb(241, 85, 126);
+                b.Text = tname;
+                b.Width = 150; 
+                b.Height = 150;
+                b.BorderRadius = 10;
+                
+                // Check if table is busy
+                if (IsTableBusy(tname))
+                {
+                    b.FillColor = Color.FromArgb(231, 76, 60); // Red for Busy
+                }
+                else
+                {
+                    b.FillColor = Color.FromArgb(46, 204, 113); // Green for Free
+                }
+
                 b.HoverState.FillColor = Color.FromArgb(50, 55, 89);
-
-
-
                 b.Click += new EventHandler(b_click);
                 flowLayoutPanel1.Controls.Add(b);
             }
+        }
 
+        private bool IsTableBusy(string tableName)
+        {
+            bool isBusy = false;
+            string qry = "Select Count(*) from tblMain where TableName = '" + tableName + "' and status = 'Pending'";
+            try
+            {
+                using (SqlCommand cmd = new SqlCommand(qry, MainClass.con))
+                {
+                    if (MainClass.con.State == ConnectionState.Closed) { MainClass.con.Open(); }
+                    int count = Convert.ToInt32(cmd.ExecuteScalar());
+                    isBusy = count > 0;
+                }
+            }
+            finally
+            {
+                MainClass.con.Close();
+            }
+            return isBusy;
         }
         private void b_click(object sender, EventArgs e)
         {

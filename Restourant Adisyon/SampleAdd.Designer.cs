@@ -141,11 +141,11 @@
         #endregion
 
         protected Guna.UI2.WinForms.Guna2Panel guna2Panel1;
-        protected Guna.UI2.WinForms.Guna2Panel guna2Panel2;
         protected System.Windows.Forms.Label label1;
         public System.Windows.Forms.Button btnSave;
         public System.Windows.Forms.Button btnClose;
         public System.Windows.Forms.PictureBox pictureBox1;
         public Guna.UI2.WinForms.Guna2MessageDialog guna2MessageDialog1;
+        protected Guna.UI2.WinForms.Guna2Panel guna2Panel2;
     }
 }

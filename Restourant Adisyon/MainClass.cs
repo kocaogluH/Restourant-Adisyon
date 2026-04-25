@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows.Forms;
@@ -27,7 +27,7 @@ namespace Restourant_Adisyon
 			{
 				isValid = true;
 				USER = dt.Rows[0]["uNAME"].ToString();
-
+				ROLE = dt.Rows[0]["uRole"] != DBNull.Value ? dt.Rows[0]["uRole"].ToString() : "Staff";
 			}
 			return isValid;
 
@@ -35,11 +35,18 @@ namespace Restourant_Adisyon
 		}
 
 		public static string user;
+		public static string role;
 
 		public static string USER
 		{
 			get { return user; }
-			private set { user = value; }
+			set { user = value; }
+		}
+
+		public static string ROLE
+		{
+			get { return role; }
+			set { role = value; }
 		}
 
 		

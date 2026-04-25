@@ -76,7 +76,7 @@ namespace Restourant_Adisyon.Vview
                 {
 
                     int id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
-                    string qry = "Delete from tables where tID=" + id + "";
+                    string qry = "Delete from tables where tid=" + id + "";
                     Hashtable ht = new Hashtable();
                     MainClass.Sql(qry, ht);
 

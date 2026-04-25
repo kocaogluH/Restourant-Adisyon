@@ -23,3 +23,9 @@ qty int,
 price float,
 amount float,
 )
+
+truncate table tblDetails;
+truncate table tblMain;
+
+Select * from tblMain m
+inner join tblDetails d on m.MainID = d.MainID

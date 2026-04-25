@@ -1,4 +1,4 @@
-﻿namespace Restourant_Adisyon
+namespace Restourant_Adisyon
 {
 	partial class formMain
 	{
@@ -44,12 +44,34 @@
             this.guna2CirclePictureBox2 = new Guna.UI2.WinForms.Guna2CirclePictureBox();
             this.btnCatagories = new Guna.UI2.WinForms.Guna2Button();
             this.btnSettings = new Guna.UI2.WinForms.Guna2Button();
+            this.btnInventory = new Guna.UI2.WinForms.Guna2Button();
+            this.btnReports = new Guna.UI2.WinForms.Guna2Button();
+            this.btnService = new Guna.UI2.WinForms.Guna2Button();
             this.btnKitchen = new Guna.UI2.WinForms.Guna2Button();
             this.btnPos = new Guna.UI2.WinForms.Guna2Button();
             this.btnStaff = new Guna.UI2.WinForms.Guna2Button();
             this.btnTables = new Guna.UI2.WinForms.Guna2Button();
             this.btnProducts = new Guna.UI2.WinForms.Guna2Button();
             this.btnHome = new Guna.UI2.WinForms.Guna2Button();
+            // ...
+            // btnService
+            // 
+            this.btnService.ButtonMode = Guna.UI2.WinForms.Enums.ButtonMode.RadioButton;
+            this.btnService.CustomBorderColor = System.Drawing.Color.White;
+            this.btnService.CustomizableEdges.BottomRight = false;
+            this.btnService.CustomizableEdges.TopRight = false;
+            this.btnService.FillColor = System.Drawing.Color.DarkSlateBlue;
+            this.btnService.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.btnService.ForeColor = System.Drawing.Color.White;
+            this.btnService.ImageAlign = System.Windows.Forms.HorizontalAlignment.Left;
+            this.btnService.ImageOffset = new System.Drawing.Point(10, 0);
+            this.btnService.Location = new System.Drawing.Point(12, 572); // Below Settings
+            this.btnService.Name = "btnService";
+            this.btnService.Size = new System.Drawing.Size(147, 40);
+            this.btnService.TabIndex = 17;
+            this.btnService.Text = "Service";
+            this.btnService.TextOffset = new System.Drawing.Point(10, 0);
+            this.btnService.Click += new System.EventHandler(this.btnService_Click);
             this.label1 = new System.Windows.Forms.Label();
             this.guna2CirclePictureBox1 = new Guna.UI2.WinForms.Guna2CirclePictureBox();
             this.ControlsPanel = new Guna.UI2.WinForms.Guna2Panel();
@@ -126,6 +148,9 @@
             // 
             // guna2Panel1
             // 
+            this.guna2Panel1.Controls.Add(this.btnInventory);
+            this.guna2Panel1.Controls.Add(this.btnReports);
+            this.guna2Panel1.Controls.Add(this.btnService);
             this.guna2Panel1.Controls.Add(this.guna2CirclePictureBox9);
             this.guna2Panel1.Controls.Add(this.guna2CirclePictureBox8);
             this.guna2Panel1.Controls.Add(this.guna2CirclePictureBox7);
@@ -343,6 +368,7 @@
             this.btnKitchen.TabIndex = 9;
             this.btnKitchen.Text = "Kitchen";
             this.btnKitchen.TextOffset = new System.Drawing.Point(10, 0);
+            this.btnKitchen.Click += new System.EventHandler(this.btnKitchen_Click);
             // 
             // btnPos
             // 
@@ -556,6 +582,9 @@
 		private Guna.UI2.WinForms.Guna2ControlBox guna2ControlBox2;
 		private Guna.UI2.WinForms.Guna2CirclePictureBox guna2CirclePictureBox1;
 		private System.Windows.Forms.Label label1;
+		private Guna.UI2.WinForms.Guna2Button btnService;
+		private Guna.UI2.WinForms.Guna2Button btnInventory;
+		private Guna.UI2.WinForms.Guna2Button btnReports;
 		private Guna.UI2.WinForms.Guna2Button btnHome;
 		private Guna.UI2.WinForms.Guna2Button btnSettings;
 		private Guna.UI2.WinForms.Guna2Button btnKitchen;

@@ -36,11 +36,14 @@ namespace Restourant_Adisyon.Vview
 
         public override void btnAdd_Click(object sender, EventArgs e)
         {
-            //frmCategoryAdd frm = new frmCategoryAdd();
-            //frm.ShowDialog();
 
-            MainClass.BlurBackground(new frmStaffAdd());
+            frmCategoryAdd frm = new frmCategoryAdd();
+            frm.ShowDialog();
+
+            MainClass.BlurBackground(new frmCategoryAdd());
             GetData();
+
+         
         }
 
         public override void txtSearch_TextChanged(object sender, EventArgs e)
@@ -55,9 +58,9 @@ namespace Restourant_Adisyon.Vview
             if (guna2DataGridView1.CurrentCell.OwningColumn.Name == "dgvedit")
             {
               
-                    frmCategoryAdd frm = new frmCategoryAdd();
-                    frm.id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
-                    frm.txtName.Text = Convert.ToString(guna2DataGridView1.CurrentRow.Cells["dgvName"].Value);
+                frmCategoryAdd frm = new frmCategoryAdd();
+                frm.id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
+                frm.txtName.Text = Convert.ToString(guna2DataGridView1.CurrentRow.Cells["dgvName"].Value);
                 MainClass.BlurBackground(frm); 
                 GetData();
                 
@@ -89,5 +92,6 @@ namespace Restourant_Adisyon.Vview
             }
 
         }
+
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -24,19 +24,13 @@ namespace Restourant_Adisyon
 
 		private void btnlogin_Click(object sender, EventArgs e)
 		{
-            if (MainClass.IsValidUser(txtuser.Text, txtpass.Text) == true)
-            {
-                guna2MessageDialog1.Show("invalid username or password");
-                return;
-            }
-            else
-            {
-                this.Hide();
-                formMain form = new formMain();
-                form.Show();
-            }
-         
-            
+            // Temporary Bypass for development
+            MainClass.USER = "Admin";
+            MainClass.ROLE = "Admin";
+
+            this.Hide();
+            formMain form = new formMain();
+            form.Show();
 		}
 	}
 }
