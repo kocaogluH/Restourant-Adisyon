@@ -1,8 +1,6 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -23,40 +21,37 @@ namespace Restourant_Adisyon
         private void GetReadyOrders()
         {
             flowLayoutPanel1.Controls.Clear();
-            string qry1 = @"Select * from tblMain where status = 'Ready' ";
-            SqlCommand cmd1 = new SqlCommand(qry1, MainClass.con);
-            DataTable dt1 = new DataTable();
-            SqlDataAdapter da = new SqlDataAdapter(cmd1);
-            da.Fill(dt1);
+
+            string qry1 = "SELECT * FROM tblMain WHERE status = 'Ready' ORDER BY MainID ASC";
+            DataTable dt1 = MainClass.GetDataTable(qry1);
 
             for (int i = 0; i < dt1.Rows.Count; i++)
             {
-                FlowLayoutPanel p1 = new FlowLayoutPanel();
-                p1.AutoSize = true;
-                p1.Width = 230;
-                p1.Height = 250;
-                p1.FlowDirection = FlowDirection.TopDown;
-                p1.BorderStyle = BorderStyle.FixedSingle;
-                p1.Margin = new Padding(10);
-                p1.BackColor = Color.FromArgb(204, 255, 204); // Light Green for Ready
+                FlowLayoutPanel p1 = new FlowLayoutPanel
+                {
+                    AutoSize = true, Width = 230, Height = 250,
+                    FlowDirection = FlowDirection.TopDown,
+                    BorderStyle = BorderStyle.FixedSingle,
+                    Margin = new Padding(10),
+                    BackColor = Color.FromArgb(204, 255, 204)
+                };
 
-                FlowLayoutPanel p2 = new FlowLayoutPanel();
-                p2.BackColor = Color.FromArgb(50, 55, 89);
-                p2.AutoSize = true;
-                p2.Width = 230;
-                p2.Height = 80;
-                p2.FlowDirection = FlowDirection.TopDown;
+                FlowLayoutPanel p2 = new FlowLayoutPanel
+                {
+                    BackColor = Color.FromArgb(50, 55, 89),
+                    AutoSize  = true, Width = 230, Height = 80,
+                    FlowDirection = FlowDirection.TopDown
+                };
 
-                p2.Controls.Add(new Label { ForeColor = Color.White, AutoSize = true, Text = "Table :" + dt1.Rows[i]["TableName"], Margin = new Padding(10, 10, 3, 0) });
-                p2.Controls.Add(new Label { ForeColor = Color.White, AutoSize = true, Text = "Waiter :" + dt1.Rows[i]["waiterName"], Margin = new Padding(10, 5, 3, 5) });
+                p2.Controls.Add(new Label { ForeColor = Color.White, AutoSize = true, Text = "Masa : " + dt1.Rows[i]["TableName"], Margin = new Padding(10, 10, 3, 0) });
+                p2.Controls.Add(new Label { ForeColor = Color.White, AutoSize = true, Text = "Garson : " + dt1.Rows[i]["WaiterName"], Margin = new Padding(10, 5, 3, 5) });
                 p1.Controls.Add(p2);
 
                 int mid = Convert.ToInt32(dt1.Rows[i]["MainID"]);
-                string qry2 = "Select pName, qty from tblDetails d inner join products p on p.pID = d.proID where d.MainID = " + mid;
-                SqlCommand cmd2 = new SqlCommand(qry2, MainClass.con);
-                DataTable dt2 = new DataTable();
-                SqlDataAdapter da2 = new SqlDataAdapter(cmd2);
-                da2.Fill(dt2);
+                string qry2 = "SELECT p.pName, d.qty FROM tblDetails d INNER JOIN products p ON p.pID=d.proID WHERE d.MainID=@ID";
+                Hashtable ht2 = new Hashtable();
+                ht2.Add("@ID", mid);
+                DataTable dt2 = MainClass.GetDataTable(qry2, ht2);
 
                 foreach (DataRow row in dt2.Rows)
                 {
@@ -65,24 +60,21 @@ namespace Restourant_Adisyon
 
                 Guna.UI2.WinForms.Guna2Button b = new Guna.UI2.WinForms.Guna2Button();
                 b.AutoRoundedCorners = true;
-                b.Size = new Size(150, 35);
+                b.Size      = new Size(150, 35);
                 b.FillColor = Color.FromArgb(241, 85, 126);
-                b.Margin = new Padding(35, 10, 3, 10);
-                b.Text = "Mark Served";
-                b.Tag = dt1.Rows[i]["MainID"].ToString();
-                b.Click += (ss, ee) => 
+                b.Margin    = new Padding(35, 10, 3, 10);
+                b.Text      = "Servis Edildi";
+                b.Tag       = dt1.Rows[i]["MainID"].ToString();
+                b.Click += (ss, ee) =>
                 {
                     int id = Convert.ToInt32((ss as Guna.UI2.WinForms.Guna2Button).Tag);
-                    string qry = "Update tblMain set status = 'Served' where MainID = @ID";
+                    string qry = "UPDATE tblMain SET status='Served' WHERE MainID=@ID";
                     Hashtable ht = new Hashtable();
                     ht.Add("@ID", id);
                     if (MainClass.Sql(qry, ht) > 0)
-                    {
                         GetReadyOrders();
-                    }
                 };
                 p1.Controls.Add(b);
-
                 flowLayoutPanel1.Controls.Add(p1);
             }
         }

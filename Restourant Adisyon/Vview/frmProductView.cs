@@ -1,13 +1,7 @@
-﻿using Restourant_Adisyon.Mmodel;
+using Restourant_Adisyon.Mmodel;
 using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Restourant_Adisyon.Vview
@@ -21,12 +15,21 @@ namespace Restourant_Adisyon.Vview
 
         private void frmProductView_Load(object sender, EventArgs e)
         {
-            GetData(); 
+            GetData();
         }
 
         public void GetData()
         {
-            string qry = "select pID,pName,pPrice,CategoryID,c.catName from products p inner join category c On c.catID = P.CategoryID  where pName like '%" + txtSearch.Text + "%'";
+            string qry = @"SELECT p.pID, p.pName, p.pPrice, p.CategoryID, c.catName, p.pBarcode
+                           FROM products p
+                           INNER JOIN category c ON c.catID = p.CategoryID
+                           WHERE p.pName LIKE @search
+                           ORDER BY c.catName, p.pName";
+            Hashtable ht = new Hashtable();
+            ht.Add("@search", "%" + txtSearch.Text.Trim() + "%");
+
+            DataTable dt = MainClass.GetDataTable(qry, ht);
+
             ListBox lb = new ListBox();
             lb.Items.Add(dgvid);
             lb.Items.Add(dgvName);
@@ -34,18 +37,24 @@ namespace Restourant_Adisyon.Vview
             lb.Items.Add(dgvcatID);
             lb.Items.Add(dgvCat);
 
+            guna2DataGridView1.CellFormatting -= gv_Cell;
+            guna2DataGridView1.CellFormatting += gv_Cell;
 
-            MainClass.LoadData(qry, guna2DataGridView1, lb);
+            for (int i = 0; i < lb.Items.Count; i++)
+                guna2DataGridView1.Columns[((DataGridViewColumn)lb.Items[i]).Name].DataPropertyName = dt.Columns[i].ColumnName;
+            guna2DataGridView1.DataSource = dt;
+        }
+
+        private void gv_Cell(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            int count = 0;
+            foreach (DataGridViewRow row in guna2DataGridView1.Rows)
+            { count++; row.Cells[0].Value = count; }
         }
 
         public override void btnAdd_Click(object sender, EventArgs e)
         {
             MainClass.BlurBackground(new frmProductAdd());
-
-            //frmCategoryAdd frm = new frmCategoryAdd();
-            //frm.ShowDialog();
-
-
             GetData();
         }
 
@@ -54,45 +63,37 @@ namespace Restourant_Adisyon.Vview
             GetData();
         }
 
-
-
         private void guna2DataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (guna2DataGridView1.CurrentCell.OwningColumn.Name == "dgvedit")
-            {
+            if (guna2DataGridView1.CurrentCell == null) return;
+            string colName = guna2DataGridView1.CurrentCell.OwningColumn.Name;
 
+            if (colName == "dgvedit")
+            {
                 frmProductAdd frm = new frmProductAdd();
-                frm.id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
-                frm.cID = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvcatID "].Value);
-              
+                frm.id  = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
+                frm.cID = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvcatID"].Value);
                 MainClass.BlurBackground(frm);
                 GetData();
-
-
-
             }
 
-            if (guna2DataGridView1.CurrentCell.OwningColumn.Name == "dgvdel")
+            if (colName == "dgvdel")
             {
-                guna2MessageDialog1.Icon = Guna.UI2.WinForms.MessageDialogIcon.Question;
+                guna2MessageDialog1.Icon    = Guna.UI2.WinForms.MessageDialogIcon.Question;
                 guna2MessageDialog1.Buttons = Guna.UI2.WinForms.MessageDialogButtons.YesNo;
-
-                if (guna2MessageDialog1.Show("Are you want to delete?") == DialogResult.Yes)
+                if (guna2MessageDialog1.Show("Bu ürünü silmek istiyor musunuz?") == DialogResult.Yes)
                 {
-
                     int id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
-                    string qry = "Delete from products where pID=" + id + "";
+                    string qry = "DELETE FROM products WHERE pID=@id";
                     Hashtable ht = new Hashtable();
+                    ht.Add("@id", id);
                     MainClass.Sql(qry, ht);
 
-
-                    guna2MessageDialog1.Icon = Guna.UI2.WinForms.MessageDialogIcon.Information;
+                    guna2MessageDialog1.Icon    = Guna.UI2.WinForms.MessageDialogIcon.Information;
                     guna2MessageDialog1.Buttons = Guna.UI2.WinForms.MessageDialogButtons.OK;
-                    guna2MessageDialog1.Show("Deleted successfully");
+                    guna2MessageDialog1.Show("Ürün silindi.");
                     GetData();
                 }
-
-
             }
         }
     }

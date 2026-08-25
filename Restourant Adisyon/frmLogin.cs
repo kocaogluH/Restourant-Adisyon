@@ -1,36 +1,52 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Restourant_Adisyon
 {
-    public partial class frmLogin: Form
+    public partial class frmLogin : Form
     {
         public frmLogin()
         {
             InitializeComponent();
         }
 
-		private void btnexit_Click(object sender, EventArgs e)
-		{
+        private void btnexit_Click(object sender, EventArgs e)
+        {
             Application.Exit();
-		}
+        }
 
-		private void btnlogin_Click(object sender, EventArgs e)
-		{
-            // Temporary Bypass for development
-            MainClass.USER = "Admin";
-            MainClass.ROLE = "Admin";
+        private void btnlogin_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrWhiteSpace(txtuser.Text))
+            {
+                MessageBox.Show("Lütfen kullanıcı adı girin.", "Uyarı",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtuser.Focus();
+                return;
+            }
 
-            this.Hide();
-            formMain form = new formMain();
-            form.Show();
-		}
-	}
+            if (string.IsNullOrWhiteSpace(txtpass.Text))
+            {
+                MessageBox.Show("Lütfen şifre girin.", "Uyarı",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                txtpass.Focus();
+                return;
+            }
+
+            if (MainClass.IsValidUser(txtuser.Text.Trim(), txtpass.Text.Trim()))
+            {
+                this.Hide();
+                formMain form = new formMain();
+                form.FormClosed += (s, args) => this.Close();
+                form.Show();
+            }
+            else
+            {
+                MessageBox.Show("Kullanıcı adı veya şifre hatalı!", "Giriş Başarısız",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                txtpass.Text = "";
+                txtpass.Focus();
+            }
+        }
+    }
 }
