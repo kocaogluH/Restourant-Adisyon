@@ -508,6 +508,7 @@
   <ItemGroup>
     <None Include="Resources\png-clipart-ellipsis-computer-icons-punctuation-others-purple-blue5.png" />
   </ItemGroup>
+<<<<<<< HEAD
   <ItemGroup>
     <None Include="Resources\images %283%29.jpeg" />
   </ItemGroup>
@@ -538,6 +539,8 @@
   <ItemGroup>
     <None Include="Resources\images1.jpg" />
   </ItemGroup>
+=======
+>>>>>>> d22edeba8a18f36de74320c0d833106fdada0f66
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Data.SqlClient.SNI.6.0.2\build\net462\Microsoft.Data.SqlClient.SNI.targets" Condition="Exists('..\packages\Microsoft.Data.SqlClient.SNI.6.0.2\build\net462\Microsoft.Data.SqlClient.SNI.targets')" />
   <Import Project="..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets" Condition="Exists('..\packages\Stub.System.Data.SQLite.Core.NetFramework.1.0.119.0\build\net46\Stub.System.Data.SQLite.Core.NetFramework.targets')" />
