@@ -22,7 +22,7 @@ namespace Restourant_Adisyon
                 MessageBox.Show("Lütfen kullanıcı adı girin.", "Uyarı",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtuser.Focus();
-                return;
+                return;   
             }
 
             if (string.IsNullOrWhiteSpace(txtpass.Text))
