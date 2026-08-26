@@ -1,4 +1,6 @@
 using Guna.UI2.WinForms;
+using Restourant_Adisyon.Business.Services;
+using Restourant_Adisyon.Core.Enums;
 using Restourant_Adisyon.Mmodel;
 using Restourant_Adisyon.Vview;
 using System;
@@ -9,6 +11,8 @@ namespace Restourant_Adisyon
 {
     public partial class formMain : Form
     {
+        private Guna2Button _btnLangToggle;
+
         public formMain()
         {
             InitializeComponent();
@@ -42,13 +46,14 @@ namespace Restourant_Adisyon
         {
             _obj = this;
 
+            // Dil değişikliği event'ini dinle
+            LocalizationService.Instance.OnLanguageChanged += Instance_OnLanguageChanged;
+
+            // Üst bar dil değiştirme butonunu ekle
+            SetupLanguageButton();
+
             // Aktif Kullanıcı ve Rol gösterimi
-            if (lblUser != null)
-            {
-                lblUser.Text = $"👤 {MainClass.USER} ({MainClass.ROLE})";
-                lblUser.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-                lblUser.ForeColor = Color.FromArgb(50, 55, 89);
-            }
+            UpdateUserLabel();
 
             // Sol menü tasarımını, oval butonları ve animasyonları uygula
             ApplyModernSidebarStyle();
@@ -69,10 +74,55 @@ namespace Restourant_Adisyon
             }
         }
 
-        /// <summary>
-        /// Sol menü butonlarını oval/dairesel (capsule pill) kapsül formuna dönüştürür,
-        /// taşma yapan beyaz dikdörtgen kenarları temizler ve yumuşak animasyonlar ekler.
-        /// </summary>
+        private void SetupLanguageButton()
+        {
+            if (guna2CustomGradientPanel1 == null) return;
+
+            _btnLangToggle = new Guna2Button
+            {
+                Text = LocalizationService.Instance.CurrentLanguage == Language.TR ? "🇹🇷 TR" : "🇬🇧 EN",
+                Size = new Size(80, 32),
+                Location = new Point(guna2CustomGradientPanel1.Width - 230, 13),
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                AutoRoundedCorners = true,
+                FillColor = Color.FromArgb(241, 85, 126),
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                Animated = true
+            };
+
+            _btnLangToggle.Click += (s, e) =>
+            {
+                Language nextLang = LocalizationService.Instance.CurrentLanguage == Language.TR
+                    ? Language.EN
+                    : Language.TR;
+                LocalizationService.Instance.ChangeLanguage(nextLang);
+            };
+
+            guna2CustomGradientPanel1.Controls.Add(_btnLangToggle);
+        }
+
+        private void Instance_OnLanguageChanged(object sender, EventArgs e)
+        {
+            if (_btnLangToggle != null)
+            {
+                _btnLangToggle.Text = LocalizationService.Instance.CurrentLanguage == Language.TR ? "🇹🇷 TR" : "🇬🇧 EN";
+            }
+            UpdateUserLabel();
+            ApplyModernSidebarStyle();
+        }
+
+        private void UpdateUserLabel()
+        {
+            if (lblUser != null)
+            {
+                string activeText = LocalizationService.Instance.GetString("Active_User");
+                lblUser.Text = $"{activeText}: {MainClass.USER} ({MainClass.ROLE})";
+                lblUser.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
+                lblUser.ForeColor = Color.FromArgb(50, 55, 89);
+            }
+        }
+
         private void ApplyModernSidebarStyle()
         {
             // Sol panel rengi (Şık koyu lacivert/indigo)
@@ -103,26 +153,26 @@ namespace Restourant_Adisyon
             // Başlık yazısı
             if (label1 != null)
             {
-                label1.Text = "RESTORAN ADİSYON\nYönetim Sistemi";
+                label1.Text = LocalizationService.Instance.GetString("App_Title");
                 label1.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
                 label1.ForeColor = Color.FromArgb(241, 85, 126);
                 label1.TextAlign = ContentAlignment.MiddleCenter;
             }
 
-            // Buton listesi ve Türkçe isimleri
+            // Dinamik Dil Çevirili Buton Listesi
             Tuple<Guna2Button, string>[] menuItems = new Tuple<Guna2Button, string>[]
             {
-                Tuple.Create(btnHome,       "Ana Sayfa"),
-                Tuple.Create(btnCatagories, "Kategoriler"),
-                Tuple.Create(btnProducts,   "Ürünler"),
-                Tuple.Create(btnTables,     "Masalar"),
-                Tuple.Create(btnStaff,      "Personel"),
-                Tuple.Create(btnPos,        "POS Satış"),
-                Tuple.Create(btnKitchen,    "Mutfak Ekranı"),
-                Tuple.Create(btnService,    "Garson Servis"),
-                Tuple.Create(btnInventory,   "Stok Takibi"),
-                Tuple.Create(btnReports,    "Raporlar"),
-                Tuple.Create(btnSettings,   "Ayarlar")
+                Tuple.Create(btnHome,       LocalizationService.Instance.GetString("Nav_Home")),
+                Tuple.Create(btnCatagories, LocalizationService.Instance.GetString("Nav_Categories")),
+                Tuple.Create(btnProducts,   LocalizationService.Instance.GetString("Nav_Products")),
+                Tuple.Create(btnTables,     LocalizationService.Instance.GetString("Nav_Tables")),
+                Tuple.Create(btnStaff,      LocalizationService.Instance.GetString("Nav_Staff")),
+                Tuple.Create(btnPos,        LocalizationService.Instance.GetString("Nav_POS")),
+                Tuple.Create(btnKitchen,    LocalizationService.Instance.GetString("Nav_Kitchen")),
+                Tuple.Create(btnService,    LocalizationService.Instance.GetString("Nav_Waiter")),
+                Tuple.Create(btnInventory,   LocalizationService.Instance.GetString("Nav_Inventory")),
+                Tuple.Create(btnReports,    LocalizationService.Instance.GetString("Nav_Reports")),
+                Tuple.Create(btnSettings,   LocalizationService.Instance.GetString("Nav_Settings"))
             };
 
             int startY = 155;
@@ -137,20 +187,19 @@ namespace Restourant_Adisyon
                 if (btn == null) continue;
 
                 btn.Text = "  " + title;
-                btn.Animated = true; // Guna2 yumuşak renk geçiş animasyonu
+                btn.Animated = true;
                 btn.ButtonMode = Guna.UI2.WinForms.Enums.ButtonMode.RadioButton;
                 btn.Size = new Size(190, btnHeight);
                 btn.Location = new Point(12, currentY);
 
-                // ── OVAL / DAİRESEL KAPSÜL ŞEKİLLENDİRME ─────────────────────────
-                btn.AutoRoundedCorners = true; // Tam dairesel/oval kapsül yapar
+                // OVAL / DAİRESEL KAPSÜL ŞEKİLLENDİRME
+                btn.AutoRoundedCorners = true;
                 btn.UseTransparentBackground = true;
                 btn.BorderThickness = 0;
                 btn.BorderColor = Color.Transparent;
                 btn.CustomBorderThickness = new Padding(0);
                 btn.CustomBorderColor = Color.Transparent;
 
-                // Tüm köşeleri serbest bırak (kareleştirme kısıtını kaldır)
                 if (btn.CustomizableEdges != null)
                 {
                     btn.CustomizableEdges.TopLeft     = true;
@@ -164,16 +213,16 @@ namespace Restourant_Adisyon
                 btn.ImageOffset = new Point(10, 0);
                 btn.TextOffset = new Point(8, 0);
 
-                // Normal Durum: Tamamen şeffaf arka plan (beyaz kare kutu kalmaz)
+                // Normal Durum
                 btn.FillColor = Color.Transparent;
                 btn.ForeColor = Color.FromArgb(185, 195, 220);
 
-                // Hover (Üzerine Gelince) Durum: Şık oval kapsül vurgusu
+                // Hover Durum
                 btn.HoverState.FillColor = Color.FromArgb(55, 62, 92);
                 btn.HoverState.ForeColor = Color.White;
                 btn.HoverState.CustomBorderColor = Color.Transparent;
 
-                // Checked (Seçili/Aktif) Durum: Canlı Pembe/Kırmızı Oval Kapsül
+                // Checked Durum (Oval Pembe Kapsül)
                 btn.CheckedState.FillColor = Color.FromArgb(241, 85, 126);
                 btn.CheckedState.ForeColor = Color.White;
                 btn.CheckedState.CustomBorderColor = Color.Transparent;
