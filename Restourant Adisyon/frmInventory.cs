@@ -17,6 +17,15 @@ namespace Restourant_Adisyon
         {
             LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
             ApplyLocalization();
+
+            if (dgvMaterials != null)
+                Restourant_Adisyon.UI.Controls.GridStyler.Apply(dgvMaterials, "Henüz malzeme eklenmemiş. Eklemek için yukarıdaki formu kullanın.");
+            if (dgvRecipe != null)
+                Restourant_Adisyon.UI.Controls.GridStyler.Apply(dgvRecipe, "Bu ürün için reçete eklenmemiş.");
+
+            if (btnAddMaterial != null)
+                Restourant_Adisyon.UI.Theme.AppTheme.StyleButton(btnAddMaterial, Restourant_Adisyon.UI.Theme.ButtonRole.Primary);
+
             LoadMaterials();
             LoadProductsForRecipe();
         }

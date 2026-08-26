@@ -1,4 +1,5 @@
 using Restourant_Adisyon.Mmodel;
+using Restourant_Adisyon.UI.Controls;
 using System;
 using System.Collections;
 using System.Data;
@@ -15,6 +16,9 @@ namespace Restourant_Adisyon.Vview
 
         private void frmTableView_Load(object sender, EventArgs e)
         {
+            if (guna2DataGridView1 != null)
+                GridStyler.Apply(guna2DataGridView1, "Henüz masa eklenmemiş. Eklemek için '+' butonuna tıklayın.");
+
             GetData();
         }
 
@@ -41,7 +45,10 @@ namespace Restourant_Adisyon.Vview
         {
             int count = 0;
             foreach (DataGridViewRow row in guna2DataGridView1.Rows)
-            { count++; row.Cells[0].Value = count; }
+            {
+                count++;
+                row.Cells[0].Value = count;
+            }
         }
 
         public override void btnAdd_Click(object sender, EventArgs e)
@@ -57,33 +64,29 @@ namespace Restourant_Adisyon.Vview
 
         private void guna2DataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (guna2DataGridView1.CurrentCell == null) return;
-            string colName = guna2DataGridView1.CurrentCell.OwningColumn.Name;
+            if (e.RowIndex < 0) return;
 
-            if (colName == "dgvedit")
+            if (guna2DataGridView1.CurrentCell.OwningColumn.Name == "dgvedit")
             {
                 frmTableAdd frm = new frmTableAdd();
-                frm.id          = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
-                frm.txtName.Text = guna2DataGridView1.CurrentRow.Cells["dgvName"].Value?.ToString();
+                frm.id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
+                frm.txtName.Text = Convert.ToString(guna2DataGridView1.CurrentRow.Cells["dgvName"].Value);
                 MainClass.BlurBackground(frm);
                 GetData();
             }
-
-            if (colName == "dgvdel")
+            if (guna2DataGridView1.CurrentCell.OwningColumn.Name == "dgvdel")
             {
-                guna2MessageDialog1.Icon    = Guna.UI2.WinForms.MessageDialogIcon.Question;
+                guna2MessageDialog1.Icon = Guna.UI2.WinForms.MessageDialogIcon.Question;
                 guna2MessageDialog1.Buttons = Guna.UI2.WinForms.MessageDialogButtons.YesNo;
-                if (guna2MessageDialog1.Show("Bu masayı silmek istiyor musunuz?") == DialogResult.Yes)
+                if (guna2MessageDialog1.Show("Bu masayı silmek istediğinize emin misiniz?") == DialogResult.Yes)
                 {
-                    int id  = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
-                    string qry = "DELETE FROM tables WHERE tID=@id";
+                    int id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
+                    string qry = "DELETE FROM tables WHERE tID=" + id;
                     Hashtable ht = new Hashtable();
-                    ht.Add("@id", id);
                     MainClass.Sql(qry, ht);
-
-                    guna2MessageDialog1.Icon    = Guna.UI2.WinForms.MessageDialogIcon.Information;
+                    guna2MessageDialog1.Icon = Guna.UI2.WinForms.MessageDialogIcon.Information;
                     guna2MessageDialog1.Buttons = Guna.UI2.WinForms.MessageDialogButtons.OK;
-                    guna2MessageDialog1.Show("Masa silindi.");
+                    guna2MessageDialog1.Show("Masa başarıyla silindi.");
                     GetData();
                 }
             }

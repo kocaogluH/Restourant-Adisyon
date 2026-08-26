@@ -189,6 +189,9 @@
     <Compile Include="Business\Services\OrderService.cs" />
     <Compile Include="Business\Services\PrintService.cs" />
     <Compile Include="Business\Services\LocalizationService.cs" />
+    <Compile Include="UI\Theme\ButtonRole.cs" />
+    <Compile Include="UI\Theme\AppTheme.cs" />
+    <Compile Include="UI\Controls\GridStyler.cs" />
     <Compile Include="frmLogin.cs">
       <SubType>Form</SubType>
     </Compile>

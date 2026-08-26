@@ -1,4 +1,4 @@
-﻿namespace Restourant_Adisyon
+namespace Restourant_Adisyon
 {
     partial class SampleView
     {
@@ -57,7 +57,7 @@
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(118, 25);
             this.label2.TabIndex = 3;
-            this.label2.Text = "Hearder Text";
+            this.label2.Text = "Header";
             // 
             // guna2Separator1
             // 

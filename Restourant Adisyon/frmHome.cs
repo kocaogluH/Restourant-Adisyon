@@ -15,6 +15,13 @@ namespace Restourant_Adisyon
         {
             LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
             ApplyLocalization();
+
+            // Kart Renk Standartlaştırması (AppTheme)
+            if (guna2Panel1 != null) guna2Panel1.FillColor = Restourant_Adisyon.UI.Theme.AppTheme.BrandPrimary; // Ciro (Pembe)
+            if (guna2Panel2 != null) guna2Panel2.FillColor = Restourant_Adisyon.UI.Theme.AppTheme.Info;         // Sipariş (Mavi)
+            if (guna2Panel3 != null) guna2Panel3.FillColor = Restourant_Adisyon.UI.Theme.AppTheme.Success;      // Ürün (Yeşil)
+            if (guna2Panel4 != null) guna2Panel4.FillColor = Restourant_Adisyon.UI.Theme.AppTheme.Warning;      // Masa (Turuncu)
+
             LoadDashboardData();
         }
 

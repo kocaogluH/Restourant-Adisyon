@@ -30,9 +30,18 @@ namespace Restourant_Adisyon.Mmodel
 
         private void frmPOS_Load(object sender, EventArgs e)
         {
-            guna2DataGridView1.BorderStyle = BorderStyle.FixedSingle;
+            if (guna2DataGridView1 != null)
+                Restourant_Adisyon.UI.Controls.GridStyler.Apply(guna2DataGridView1, "Cart_Empty");
+
             LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
             ApplyLocalization();
+
+            // Buton Hiyerarşisi (Button Roles)
+            if (btnCheckout != null) Restourant_Adisyon.UI.Theme.AppTheme.StyleButton(btnCheckout, Restourant_Adisyon.UI.Theme.ButtonRole.Success); // Yeşil
+            if (btnKot != null)      Restourant_Adisyon.UI.Theme.AppTheme.StyleButton(btnKot, Restourant_Adisyon.UI.Theme.ButtonRole.Primary);   // Pembe
+            if (btnNew != null)      Restourant_Adisyon.UI.Theme.AppTheme.StyleButton(btnNew, Restourant_Adisyon.UI.Theme.ButtonRole.Info);      // Mavi
+            if (btnBill != null)     Restourant_Adisyon.UI.Theme.AppTheme.StyleButton(btnBill, Restourant_Adisyon.UI.Theme.ButtonRole.Secondary);
+
             ProductPanel.Controls.Clear();
             LoadProducts();
 

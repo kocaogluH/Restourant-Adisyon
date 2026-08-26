@@ -23,6 +23,14 @@ namespace Restourant_Adisyon
             LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
             ApplyLocalization();
 
+            if (dgvTopProducts != null)
+                Restourant_Adisyon.UI.Controls.GridStyler.Apply(dgvTopProducts, "Bu tarih aralığında satılan ürün bulunmuyor.");
+            if (dgvDailySales != null)
+                Restourant_Adisyon.UI.Controls.GridStyler.Apply(dgvDailySales, "Bu tarih aralığında tamamlanan sipariş bulunmuyor.");
+
+            if (btnFilter != null)
+                Restourant_Adisyon.UI.Theme.AppTheme.StyleButton(btnFilter, Restourant_Adisyon.UI.Theme.ButtonRole.Info);
+
             LoadSummaryCards();
             LoadTopProducts();
             LoadDailySales();

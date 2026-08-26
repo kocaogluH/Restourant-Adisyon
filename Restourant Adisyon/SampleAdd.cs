@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using Restourant_Adisyon.Business.Services;
+using Restourant_Adisyon.UI.Theme;
 
 namespace Restourant_Adisyon
 {
@@ -16,6 +17,11 @@ namespace Restourant_Adisyon
         {
             LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
             ApplyLocalization();
+
+            if (btnSave != null)
+                AppTheme.StyleButton(btnSave, ButtonRole.Success);
+            if (btnClose != null)
+                AppTheme.StyleButton(btnClose, ButtonRole.Danger);
         }
 
         public virtual void ApplyLocalization()

@@ -27,6 +27,9 @@ namespace Restourant_Adisyon.Mmodel
             LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
             ApplyLocalization();
 
+            if (btnSave != null)
+                Restourant_Adisyon.UI.Theme.AppTheme.StyleButton(btnSave, Restourant_Adisyon.UI.Theme.ButtonRole.Success);
+
             Order order = _orderService.GetOrderById(MainID);
             if (order != null)
             {
