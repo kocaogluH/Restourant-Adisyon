@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Data;
+using System.Drawing;
+using System.Drawing.Printing;
 using System.Windows.Forms;
+using Restourant_Adisyon.Business.Services;
 
 namespace Restourant_Adisyon
 {
@@ -14,139 +17,89 @@ namespace Restourant_Adisyon
 
         private void frmReports_Load(object sender, EventArgs e)
         {
-            dtStart.Value = DateTime.Now.AddDays(-7);
-            dtEnd.Value   = DateTime.Now;
-            LoadReports();
+            if (dtStart != null) dtStart.Value = DateTime.Today;
+            if (dtEnd != null)   dtEnd.Value   = DateTime.Today.AddDays(1).AddSeconds(-1);
+
+            LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
+            ApplyLocalization();
+
+            LoadSummaryCards();
+            LoadTopProducts();
+            LoadDailySales();
+        }
+
+        private void ApplyLocalization()
+        {
+            var loc = LocalizationService.Instance;
+            if (label1 != null) label1.Text = loc.GetString("Total_Revenue");
+            if (label3 != null) label3.Text = loc.GetString("Total_Orders");
+            if (label5 != null) label5.Text = loc.GetString("Top_Products");
+            if (label6 != null) label6.Text = loc.GetString("Daily_Sales");
+            if (btnFilter != null) btnFilter.Text = loc.GetString("Search");
         }
 
         private void btnFilter_Click(object sender, EventArgs e)
         {
-            LoadReports();
-        }
-
-        private void LoadReports()
-        {
-            LoadStats();
+            LoadSummaryCards();
             LoadTopProducts();
-            LoadSalesGrid();
+            LoadDailySales();
         }
 
-        // ─── İstatistikler ──────────────────────────────────────────────────────
-        private void LoadStats()
+        private void LoadSummaryCards()
         {
-            string start = dtStart.Value.ToString("yyyy-MM-dd");
-            string end   = dtEnd.Value.ToString("yyyy-MM-dd");
-
-            // Toplam Ciro
             Hashtable ht = new Hashtable();
-            ht.Add("@start", start);
-            ht.Add("@end",   end);
+            string startStr = dtStart != null ? dtStart.Value.ToString("yyyy-MM-dd HH:mm:ss") : DateTime.Today.ToString("yyyy-MM-dd HH:mm:ss");
+            string endStr   = dtEnd != null ? dtEnd.Value.ToString("yyyy-MM-dd HH:mm:ss") : DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
 
-            object res = MainClass.SqlScalar(
+            ht.Add("@start", startStr);
+            ht.Add("@end",   endStr);
+
+            object rev = MainClass.SqlScalar(
                 "SELECT IFNULL(SUM(total),0) FROM tblMain WHERE status='Paid' AND aDate BETWEEN @start AND @end", ht);
-            lblTotalRevenue.Text = Convert.ToDouble(res).ToString("N2") + " ₺";
+            lblTotalRevenue.Text = Convert.ToDouble(rev).ToString("N2") + " ₺";
 
-            // Toplam Sipariş
             object cnt = MainClass.SqlScalar(
                 "SELECT COUNT(MainID) FROM tblMain WHERE status='Paid' AND aDate BETWEEN @start AND @end", ht);
             lblTotalOrders.Text = Convert.ToInt64(cnt).ToString();
-
-            // Ortalama Sipariş Tutarı (kontrol varsa)
-            // Gelecekte lblAvgOrder eklendikten sonra etkinleştirilebilir
         }
 
-        // ─── En Çok Satılan Ürünler ─────────────────────────────────────────────
         private void LoadTopProducts()
         {
-            string qry = @"SELECT p.pName AS 'Ürün', 
-                                  SUM(d.qty) AS 'Adet', 
-                                  ROUND(SUM(d.amount),2) AS 'Ciro (₺)'
+            string qry = @"SELECT p.pName AS 'Ürün Adı', SUM(d.qty) AS 'Toplam Adet', SUM(d.amount) AS 'Toplam Ciro ₺'
                            FROM tblDetails d
                            INNER JOIN products p ON p.pID = d.proID
-                           INNER JOIN tblMain m ON m.MainID = d.MainID
-                           WHERE m.status = 'Paid'
-                             AND m.aDate BETWEEN @start AND @end
-                           GROUP BY p.pName
+                           INNER JOIN tblMain m  ON m.MainID = d.MainID
+                           WHERE m.status = 'Paid' AND m.aDate BETWEEN @start AND @end
+                           GROUP BY p.pID, p.pName
                            ORDER BY SUM(d.qty) DESC
                            LIMIT 10";
 
             Hashtable ht = new Hashtable();
-            ht.Add("@start", dtStart.Value.ToString("yyyy-MM-dd"));
-            ht.Add("@end",   dtEnd.Value.ToString("yyyy-MM-dd"));
+            string startStr = dtStart != null ? dtStart.Value.ToString("yyyy-MM-dd HH:mm:ss") : DateTime.Today.ToString("yyyy-MM-dd HH:mm:ss");
+            string endStr   = dtEnd != null ? dtEnd.Value.ToString("yyyy-MM-dd HH:mm:ss") : DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            ht.Add("@start", startStr);
+            ht.Add("@end",   endStr);
 
             dgvTopProducts.DataSource = MainClass.GetDataTable(qry, ht);
         }
 
-        // ─── Günlük Satış Listesi ───────────────────────────────────────────────
-        private void LoadSalesGrid()
+        private void LoadDailySales()
         {
-            string qry = @"SELECT aDate AS 'Tarih',
-                                  COUNT(MainID) AS 'Sipariş Sayısı',
-                                  ROUND(SUM(total),2) AS 'Günlük Ciro (₺)'
+            string qry = @"SELECT MainID AS 'Adisyon No', aDate AS 'Tarih', TableName AS 'Masa',
+                                  WaiterName AS 'Garson', total AS 'Tutar ₺', status AS 'Durum'
                            FROM tblMain
-                           WHERE status = 'Paid'
-                             AND aDate BETWEEN @start AND @end
-                           GROUP BY aDate
-                           ORDER BY aDate DESC";
+                           WHERE status='Paid' AND aDate BETWEEN @start AND @end
+                           ORDER BY MainID DESC";
 
             Hashtable ht = new Hashtable();
-            ht.Add("@start", dtStart.Value.ToString("yyyy-MM-dd"));
-            ht.Add("@end",   dtEnd.Value.ToString("yyyy-MM-dd"));
+            string startStr = dtStart != null ? dtStart.Value.ToString("yyyy-MM-dd HH:mm:ss") : DateTime.Today.ToString("yyyy-MM-dd HH:mm:ss");
+            string endStr   = dtEnd != null ? dtEnd.Value.ToString("yyyy-MM-dd HH:mm:ss") : DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+
+            ht.Add("@start", startStr);
+            ht.Add("@end",   endStr);
 
             dgvDailySales.DataSource = MainClass.GetDataTable(qry, ht);
-        }
-
-        // ─── Raporu Yazdır ──────────────────────────────────────────────────────
-        private void btnPrintReport_Click(object sender, EventArgs e)
-        {
-            PrintReport();
-        }
-
-        private void PrintReport()
-        {
-            try
-            {
-                using (System.Drawing.Printing.PrintDocument pd = new System.Drawing.Printing.PrintDocument())
-                {
-                    pd.PrintPage += (s, ev) =>
-                    {
-                        System.Drawing.Graphics g = ev.Graphics;
-                        var fntTitle  = new System.Drawing.Font("Arial", 14, System.Drawing.FontStyle.Bold);
-                        var fntHeader = new System.Drawing.Font("Arial", 10, System.Drawing.FontStyle.Bold);
-                        var fntNormal = new System.Drawing.Font("Arial", 9);
-                        int y = 30;
-
-                        g.DrawString("SATIŞ RAPORU", fntTitle, System.Drawing.Brushes.Black, 20, y);
-                        y += 30;
-                        g.DrawString($"Tarih Aralığı: {dtStart.Value:dd.MM.yyyy} - {dtEnd.Value:dd.MM.yyyy}", fntHeader, System.Drawing.Brushes.Black, 20, y);
-                        y += 20;
-                        g.DrawString($"Toplam Ciro: {lblTotalRevenue.Text}", fntNormal, System.Drawing.Brushes.Black, 20, y);
-                        y += 15;
-                        g.DrawString($"Toplam Sipariş: {lblTotalOrders.Text}", fntNormal, System.Drawing.Brushes.Black, 20, y);
-                        y += 25;
-
-                        g.DrawString("EN ÇOK SATILAN ÜRÜNLER", fntHeader, System.Drawing.Brushes.Black, 20, y);
-                        y += 20;
-                        foreach (DataGridViewRow row in dgvTopProducts.Rows)
-                        {
-                            string line = $"  {row.Cells[0].Value}  |  Adet: {row.Cells[1].Value}  |  Ciro: {row.Cells[2].Value} ₺";
-                            g.DrawString(line, fntNormal, System.Drawing.Brushes.Black, 20, y);
-                            y += 14;
-                        }
-                    };
-
-                    PrintDialog dlg = new PrintDialog();
-                    dlg.Document = pd;
-                    if (dlg.ShowDialog() == DialogResult.OK)
-                        pd.Print();
-                }
-            }
-            catch (Exception ex)
-            {
-                MainClass.LogError("frmReports.PrintReport", ex);
-                MessageBox.Show("Yazdırma hatası: " + ex.Message, "Hata",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
     }
 }

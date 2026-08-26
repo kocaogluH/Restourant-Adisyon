@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 using System.Windows.Forms;
+using Restourant_Adisyon.Business.Services;
 
 namespace Restourant_Adisyon
 {
@@ -15,6 +9,23 @@ namespace Restourant_Adisyon
         public SampleView()
         {
             InitializeComponent();
+            this.Load += SampleView_Load;
+        }
+
+        private void SampleView_Load(object sender, EventArgs e)
+        {
+            LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
+            ApplyLocalization();
+        }
+
+        public virtual void ApplyLocalization()
+        {
+            if (txtSearch != null)
+                txtSearch.PlaceholderText = LocalizationService.Instance.GetString("Search");
+            if (btnAdd != null)
+                btnAdd.Text = "+ " + LocalizationService.Instance.GetString("Add_New");
+            if (label2 != null && !string.IsNullOrEmpty(label2.Text))
+                label2.Text = LocalizationService.Instance.GetString(label2.Text);
         }
 
         public virtual void btnAdd_Click(object sender, EventArgs e)
@@ -27,10 +38,6 @@ namespace Restourant_Adisyon
             // Base implementation
         }
 
-        // Protected property to access txtSearch
-        protected Guna.UI2.WinForms.Guna2TextBox SearchTextBox
-        {
-            get { return txtSearch; }
-        }
+        protected Guna.UI2.WinForms.Guna2TextBox SearchTextBox => txtSearch;
     }
 }

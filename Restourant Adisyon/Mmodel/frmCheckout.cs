@@ -24,6 +24,9 @@ namespace Restourant_Adisyon.Mmodel
 
         private void frmCheckout_Load(object sender, EventArgs e)
         {
+            LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
+            ApplyLocalization();
+
             Order order = _orderService.GetOrderById(MainID);
             if (order != null)
             {
@@ -33,6 +36,16 @@ namespace Restourant_Adisyon.Mmodel
             {
                 txtBillAmount.Text = amt.ToString("N2");
             }
+        }
+
+        private void ApplyLocalization()
+        {
+            var loc = LocalizationService.Instance;
+            if (label1 != null) label1.Text = loc.GetString("Checkout_Title");
+            if (label2 != null) label2.Text = loc.GetString("Bill_Amount");
+            if (label3 != null) label3.Text = loc.GetString("Received_Amount");
+            if (label4 != null) label4.Text = loc.GetString("Change_Amount");
+            if (btnSave != null) btnSave.Text = loc.GetString("Pay_Bill");
         }
 
         private void txtReceived_TextChanged(object sender, EventArgs e)

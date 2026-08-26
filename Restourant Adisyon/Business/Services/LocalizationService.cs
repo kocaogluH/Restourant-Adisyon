@@ -28,10 +28,11 @@ namespace Restourant_Adisyon.Business.Services
             { "Nav_Reports", "Raporlar" },
             { "Nav_Settings", "Ayarlar" },
 
-            // Başlıklar & Etiketler
+            // Genel Başlıklar & Butonlar
             { "App_Title", "RESTORAN ADİSYON\nYönetim Sistemi" },
             { "Active_User", "👤 Aktif Kullanıcı" },
             { "Login_Title", "Giriş Yap" },
+            { "Login_Subtitle", "Lütfen bilgilerinizi giriniz" },
             { "Username", "Kullanıcı Adı veya PIN" },
             { "Password", "Şifre" },
             { "Login_Btn", "Giriş Yap" },
@@ -39,9 +40,17 @@ namespace Restourant_Adisyon.Business.Services
             { "Search", "Ara..." },
             { "Add_New", "Yeni Ekle" },
             { "Save", "Kaydet" },
+            { "Close", "Kapat" },
+            { "Cancel", "İptal" },
             { "Delete", "Sil" },
             { "Edit", "Düzenle" },
             { "Total", "Toplam" },
+            { "Success", "Başarılı" },
+            { "Error", "Hata" },
+            { "Warning", "Uyarı" },
+            { "Confirm_Delete", "Bu kaydı silmek istediğinize emin misiniz?" },
+            { "Deleted_Successfully", "Başarıyla silindi." },
+            { "Saved_Successfully", "Başarıyla kaydedildi." },
 
             // Checkout / Ödeme
             { "Checkout_Title", "Ödeme Al / Fiş Kes" },
@@ -54,6 +63,13 @@ namespace Restourant_Adisyon.Business.Services
 
             // POS Ekranı
             { "All_Categories", "Tümü" },
+            { "POS_NewOrder", "Yeni Sipariş" },
+            { "POS_DineIn", "Masada" },
+            { "POS_TakeAway", "Gel-Al" },
+            { "POS_Delivery", "Paket" },
+            { "POS_KOT", "Mutfağa Gönder (KOT)" },
+            { "POS_BillList", "Adisyonlar" },
+            { "POS_Checkout", "Hesap Kapat" },
             { "Order_Saved", "Sipariş mutfağa gönderildi!" },
             { "Select_Order_Type", "Lütfen sipariş tipini seçin (Masada/Paket/Gel-Al)." },
             { "Cart_Empty", "Lütfen önce sepetinize ürün ekleyin." },
@@ -67,6 +83,25 @@ namespace Restourant_Adisyon.Business.Services
             { "Status_Cooking", "Pişiriliyor" },
             { "Status_Ready", "Hazır" },
             { "Status_Served", "Servis Edildi" },
+            { "Table", "Masa" },
+            { "Waiter", "Garson" },
+            { "Time", "Saat" },
+
+            // Kategori, Masa, Ürün, Personel Formları
+            { "Cat_Name", "Kategori Adı" },
+            { "Cat_Header", "Kategori Yönetimi" },
+            { "Table_Name", "Masa Adı" },
+            { "Table_Header", "Masa Yönetimi" },
+            { "Table_Select", "Masa Seçimi" },
+            { "Product_Name", "Ürün Adı" },
+            { "Price", "Fiyat" },
+            { "Category", "Kategori" },
+            { "Product_Header", "Ürün Yönetimi" },
+            { "Browse_Image", "Resim Seç" },
+            { "Staff_Name", "Personel Adı" },
+            { "Phone", "Telefon" },
+            { "Role", "Rol" },
+            { "Staff_Header", "Personel Yönetimi" },
 
             // Raporlar & Stok
             { "Total_Revenue", "Toplam Ciro" },
@@ -78,6 +113,7 @@ namespace Restourant_Adisyon.Business.Services
             { "Material_Name", "Malzeme Adı" },
             { "Quantity", "Miktar" },
             { "Unit", "Birim" },
+            { "Recipe_Header", "Ürün Reçetesi" },
             { "Stock_Warning", "⚠ STOK UYARISI" }
         };
 
@@ -96,10 +132,11 @@ namespace Restourant_Adisyon.Business.Services
             { "Nav_Reports", "Reports" },
             { "Nav_Settings", "Settings" },
 
-            // Titles & Labels
+            // General Titles & Buttons
             { "App_Title", "RESTAURANT POS\nManagement System" },
             { "Active_User", "👤 Active User" },
             { "Login_Title", "Sign In" },
+            { "Login_Subtitle", "Please enter your credentials" },
             { "Username", "Username or PIN" },
             { "Password", "Password" },
             { "Login_Btn", "Login" },
@@ -107,9 +144,17 @@ namespace Restourant_Adisyon.Business.Services
             { "Search", "Search..." },
             { "Add_New", "Add New" },
             { "Save", "Save" },
+            { "Close", "Close" },
+            { "Cancel", "Cancel" },
             { "Delete", "Delete" },
             { "Edit", "Edit" },
             { "Total", "Total" },
+            { "Success", "Success" },
+            { "Error", "Error" },
+            { "Warning", "Warning" },
+            { "Confirm_Delete", "Are you sure you want to delete this record?" },
+            { "Deleted_Successfully", "Deleted successfully." },
+            { "Saved_Successfully", "Saved successfully." },
 
             // Checkout / Payment
             { "Checkout_Title", "Checkout / Receipt" },
@@ -122,6 +167,13 @@ namespace Restourant_Adisyon.Business.Services
 
             // POS Screen
             { "All_Categories", "All" },
+            { "POS_NewOrder", "New Order" },
+            { "POS_DineIn", "Dine In" },
+            { "POS_TakeAway", "Takeaway" },
+            { "POS_Delivery", "Delivery" },
+            { "POS_KOT", "Send to Kitchen (KOT)" },
+            { "POS_BillList", "Bills" },
+            { "POS_Checkout", "Checkout" },
             { "Order_Saved", "Order sent to kitchen!" },
             { "Select_Order_Type", "Please select order type (Dine-in/Delivery/Takeaway)." },
             { "Cart_Empty", "Please add items to cart first." },
@@ -135,6 +187,25 @@ namespace Restourant_Adisyon.Business.Services
             { "Status_Cooking", "Cooking" },
             { "Status_Ready", "Ready" },
             { "Status_Served", "Served" },
+            { "Table", "Table" },
+            { "Waiter", "Waiter" },
+            { "Time", "Time" },
+
+            // Category, Table, Product, Staff Forms
+            { "Cat_Name", "Category Name" },
+            { "Cat_Header", "Category Management" },
+            { "Table_Name", "Table Name" },
+            { "Table_Header", "Table Management" },
+            { "Table_Select", "Select Table" },
+            { "Product_Name", "Product Name" },
+            { "Price", "Price" },
+            { "Category", "Category" },
+            { "Product_Header", "Product Management" },
+            { "Browse_Image", "Select Image" },
+            { "Staff_Name", "Staff Name" },
+            { "Phone", "Phone" },
+            { "Role", "Role" },
+            { "Staff_Header", "Staff Management" },
 
             // Reports & Inventory
             { "Total_Revenue", "Total Revenue" },
@@ -146,6 +217,7 @@ namespace Restourant_Adisyon.Business.Services
             { "Material_Name", "Material Name" },
             { "Quantity", "Quantity" },
             { "Unit", "Unit" },
+            { "Recipe_Header", "Product Recipe" },
             { "Stock_Warning", "⚠ STOCK WARNING" }
         };
 

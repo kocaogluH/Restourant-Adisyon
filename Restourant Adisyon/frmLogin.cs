@@ -13,6 +13,21 @@ namespace Restourant_Adisyon
             InitializeComponent();
         }
 
+        private void frmLogin_Load(object sender, EventArgs e)
+        {
+            LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
+            ApplyLocalization();
+        }
+
+        private void ApplyLocalization()
+        {
+            var loc = LocalizationService.Instance;
+            if (label3 != null)   label3.Text   = loc.GetString("Login_Subtitle");
+            if (label1 != null)   label1.Text   = loc.GetString("Username");
+            if (label2 != null)   label2.Text   = loc.GetString("Password");
+            if (btnlogin != null) btnlogin.Text = loc.GetString("Login_Btn");
+        }
+
         private void btnexit_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -22,7 +37,7 @@ namespace Restourant_Adisyon
         {
             if (string.IsNullOrWhiteSpace(txtuser.Text))
             {
-                MessageBox.Show("Lütfen kullanıcı adı veya PIN kodunuzu girin.", "Uyarı",
+                MessageBox.Show(LocalizationService.Instance.GetString("Username"), "Uyarı",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtuser.Focus();
                 return;

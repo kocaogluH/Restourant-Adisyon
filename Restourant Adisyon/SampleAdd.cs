@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System;
 using System.Windows.Forms;
+using Restourant_Adisyon.Business.Services;
 
 namespace Restourant_Adisyon
 {
@@ -15,11 +9,25 @@ namespace Restourant_Adisyon
         public SampleAdd()
         {
             InitializeComponent();
+            this.Load += SampleAdd_Load;
+        }
+
+        private void SampleAdd_Load(object sender, EventArgs e)
+        {
+            LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
+            ApplyLocalization();
+        }
+
+        public virtual void ApplyLocalization()
+        {
+            if (btnSave != null)
+                btnSave.Text = LocalizationService.Instance.GetString("Save");
+            if (btnClose != null)
+                btnClose.Text = LocalizationService.Instance.GetString("Close");
         }
 
         public virtual void btnSave_Click(object sender, EventArgs e)
         {
-
         }
 
         public virtual void btnClose_Click(object sender, EventArgs e)

@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Windows.Forms;
+using Restourant_Adisyon.Business.Services;
 
 namespace Restourant_Adisyon
 {
@@ -14,8 +15,20 @@ namespace Restourant_Adisyon
 
         private void frmInventory_Load(object sender, EventArgs e)
         {
+            LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
+            ApplyLocalization();
             LoadMaterials();
             LoadProductsForRecipe();
+        }
+
+        private void ApplyLocalization()
+        {
+            var loc = LocalizationService.Instance;
+            if (label1 != null) label1.Text = loc.GetString("Material_Name");
+            if (label2 != null) label2.Text = loc.GetString("Quantity");
+            if (label3 != null) label3.Text = loc.GetString("Unit");
+            if (label4 != null) label4.Text = loc.GetString("Recipe_Header");
+            if (btnAddMaterial != null) btnAddMaterial.Text = loc.GetString("Add_Material");
         }
 
         private void LoadMaterials()
@@ -82,11 +95,6 @@ namespace Restourant_Adisyon
             Hashtable ht = new Hashtable();
             ht.Add("@proID", proID);
             dgvRecipe.DataSource = MainClass.GetDataTable(qry, ht);
-        }
-
-        private void btnAddRecipe_Click(object sender, EventArgs e)
-        {
-            // Tarife ekleme mantığı - ileride genişletilebilir
         }
     }
 }

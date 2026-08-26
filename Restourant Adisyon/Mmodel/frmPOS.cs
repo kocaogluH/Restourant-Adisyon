@@ -5,6 +5,7 @@ using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using Restourant_Adisyon.Business.Services;
 
 namespace Restourant_Adisyon.Mmodel
 {
@@ -30,12 +31,27 @@ namespace Restourant_Adisyon.Mmodel
         private void frmPOS_Load(object sender, EventArgs e)
         {
             guna2DataGridView1.BorderStyle = BorderStyle.FixedSingle;
-            AddCategory();
+            LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
+            ApplyLocalization();
             ProductPanel.Controls.Clear();
             LoadProducts();
 
             // Barkod desteği: form-level KeyPreview etkinleştir
             this.KeyPreview = true;
+        }
+
+        private void ApplyLocalization()
+        {
+            var loc = LocalizationService.Instance;
+            if (btnNew != null)      btnNew.Text      = loc.GetString("POS_NewOrder");
+            if (btnDin != null)      btnDin.Text      = loc.GetString("POS_DineIn");
+            if (btnTake != null)     btnTake.Text     = loc.GetString("POS_TakeAway");
+            if (btnDelivery != null) btnDelivery.Text = loc.GetString("POS_Delivery");
+            if (btnKot != null)      btnKot.Text      = loc.GetString("POS_KOT");
+            if (btnBill != null)     btnBill.Text     = loc.GetString("POS_BillList");
+            if (btnCheckout != null) btnCheckout.Text = loc.GetString("POS_Checkout");
+            if (txtSearch != null)   txtSearch.PlaceholderText = loc.GetString("Search");
+            AddCategory();
         }
 
         // ── Kategori Butonları ───────────────────────────────────────────────────
@@ -46,12 +62,13 @@ namespace Restourant_Adisyon.Mmodel
 
             CategoryPanel.Controls.Clear();
 
-            // "Tümü" butonu
+            // "Tümü" / "All" butonu
+            string allText = LocalizationService.Instance.GetString("All_Categories");
             Guna.UI2.WinForms.Guna2Button b2 = new Guna.UI2.WinForms.Guna2Button();
             b2.FillColor = Color.FromArgb(50, 55, 89);
             b2.Size      = new Size(134, 45);
             b2.ButtonMode = Guna.UI2.WinForms.Enums.ButtonMode.RadioButton;
-            b2.Text      = "Tümü";
+            b2.Text      = allText;
             b2.CheckedState.FillColor = Color.FromArgb(241, 85, 126);
             b2.Click += new EventHandler(b_click);
             CategoryPanel.Controls.Add(b2);
@@ -71,8 +88,9 @@ namespace Restourant_Adisyon.Mmodel
 
         private void b_click(object sender, EventArgs e)
         {
+            string allText = LocalizationService.Instance.GetString("All_Categories");
             Guna.UI2.WinForms.Guna2Button b = (Guna.UI2.WinForms.Guna2Button)sender;
-            if (b.Text == "Tümü")
+            if (b.Text == allText || b.Text == "Tümü" || b.Text == "All")
             {
                 foreach (var item in ProductPanel.Controls)
                     ((ucProduct)item).Visible = true;

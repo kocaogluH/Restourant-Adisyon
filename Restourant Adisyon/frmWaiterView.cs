@@ -3,6 +3,7 @@ using System.Collections;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+using Restourant_Adisyon.Business.Services;
 
 namespace Restourant_Adisyon
 {
@@ -15,6 +16,7 @@ namespace Restourant_Adisyon
 
         private void frmWaiterView_Load(object sender, EventArgs e)
         {
+            LocalizationService.Instance.OnLanguageChanged += (s, ev) => GetReadyOrders();
             GetReadyOrders();
         }
 
@@ -24,6 +26,7 @@ namespace Restourant_Adisyon
 
             string qry1 = "SELECT * FROM tblMain WHERE status = 'Ready' ORDER BY MainID ASC";
             DataTable dt1 = MainClass.GetDataTable(qry1);
+            var loc = LocalizationService.Instance;
 
             for (int i = 0; i < dt1.Rows.Count; i++)
             {
@@ -43,8 +46,8 @@ namespace Restourant_Adisyon
                     FlowDirection = FlowDirection.TopDown
                 };
 
-                p2.Controls.Add(new Label { ForeColor = Color.White, AutoSize = true, Text = "Masa : " + dt1.Rows[i]["TableName"], Margin = new Padding(10, 10, 3, 0) });
-                p2.Controls.Add(new Label { ForeColor = Color.White, AutoSize = true, Text = "Garson : " + dt1.Rows[i]["WaiterName"], Margin = new Padding(10, 5, 3, 5) });
+                p2.Controls.Add(new Label { ForeColor = Color.White, AutoSize = true, Text = loc.GetString("Table") + " : " + dt1.Rows[i]["TableName"], Margin = new Padding(10, 10, 3, 0) });
+                p2.Controls.Add(new Label { ForeColor = Color.White, AutoSize = true, Text = loc.GetString("Waiter") + " : " + dt1.Rows[i]["WaiterName"], Margin = new Padding(10, 5, 3, 5) });
                 p1.Controls.Add(p2);
 
                 int mid = Convert.ToInt32(dt1.Rows[i]["MainID"]);
@@ -63,7 +66,7 @@ namespace Restourant_Adisyon
                 b.Size      = new Size(150, 35);
                 b.FillColor = Color.FromArgb(241, 85, 126);
                 b.Margin    = new Padding(35, 10, 3, 10);
-                b.Text      = "Servis Edildi";
+                b.Text      = loc.GetString("Mark_Served");
                 b.Tag       = dt1.Rows[i]["MainID"].ToString();
                 b.Click += (ss, ee) =>
                 {
