@@ -3,25 +3,36 @@ using System.Collections;
 using System.Data;
 using System.Drawing;
 using System.Drawing.Printing;
-using System.Text;
 using System.Windows.Forms;
+using Restourant_Adisyon.Business.Services;
+using Restourant_Adisyon.Core.Entities;
+using Restourant_Adisyon.Core.Enums;
 
 namespace Restourant_Adisyon.Mmodel
 {
     public partial class frmCheckout : Form
     {
+        private readonly OrderService _orderService = new OrderService();
+        public double amt;
+        public int    MainID;
+        public bool   isSuccess = false;
+
         public frmCheckout()
         {
             InitializeComponent();
         }
 
-        public double amt;
-        public int    MainID;
-        public bool   isSuccess = false;
-
         private void frmCheckout_Load(object sender, EventArgs e)
         {
-            txtBillAmount.Text = amt.ToString("N2");
+            Order order = _orderService.GetOrderById(MainID);
+            if (order != null)
+            {
+                txtBillAmount.Text = order.RemainingAmount > 0 ? order.RemainingAmount.ToString("N2") : order.TotalAmount.ToString("N2");
+            }
+            else
+            {
+                txtBillAmount.Text = amt.ToString("N2");
+            }
         }
 
         private void txtReceived_TextChanged(object sender, EventArgs e)
@@ -41,39 +52,46 @@ namespace Restourant_Adisyon.Mmodel
         {
             if (string.IsNullOrWhiteSpace(txtReceived.Text))
             {
-                MessageBox.Show("Lütfen alınan tutarı girin.", "Uyarı",
+                MessageBox.Show("Lütfen alınan ödeme tutarını girin.", "Uyarı",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtReceived.Focus();
                 return;
             }
 
-            double received = 0;
-            if (!double.TryParse(txtReceived.Text, out received) || received < 0)
+            decimal received = 0m;
+            if (!decimal.TryParse(txtReceived.Text, out received) || received <= 0m)
             {
-                MessageBox.Show("Geçerli bir tutar girin.", "Uyarı",
+                MessageBox.Show("Geçerli bir ödeme tutarı girin.", "Uyarı",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            double change = received - amt;
+            // Split Bill / Parçalı Ödeme İşleme
+            decimal remainingAmount;
+            bool success = _orderService.AddPayment(MainID, received, PaymentMethod.Nakit, out remainingAmount);
 
-            string qry = @"UPDATE tblMain 
-                           SET status='Paid', received=@received, change=@change
-                           WHERE MainID=@ID";
-
-            Hashtable ht = new Hashtable();
-            ht.Add("@ID",       MainID);
-            ht.Add("@received", received);
-            ht.Add("@change",   change);
-
-            if (MainClass.Sql(qry, ht) > 0)
+            if (success)
             {
-                MessageBox.Show("Ödeme alındı. Para üstü: " + change.ToString("N2") + " ₺",
-                    "Başarılı", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                isSuccess = true;
-
-                // Fiş yazdır
-                PrintReceipt(received, change);
+                if (remainingAmount <= 0)
+                {
+                    MessageBox.Show("Hesabın tamamı kapatıldı! Fiş yazdırılıyor...",
+                        "Ödeme Tamamlandı", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    isSuccess = true;
+                    PrintReceipt((double)received, 0);
+                }
+                else
+                {
+                    MessageBox.Show($"Parçalı ödeme alındı! Kalan Hesap Tutarı: {remainingAmount:N2} ₺",
+                        "Parçalı Ödeme", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    txtBillAmount.Text = remainingAmount.ToString("N2");
+                    txtReceived.Clear();
+                    txtChange.Clear();
+                }
+            }
+            else
+            {
+                MessageBox.Show("Ödeme işlenirken bir hata oluştu veya kalan tutardan fazla miktar girildi.", "Hata",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

@@ -171,6 +171,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class1.cs" />
+    <Compile Include="Core\Enums\StaffRole.cs" />
+    <Compile Include="Core\Enums\OrderStatus.cs" />
+    <Compile Include="Core\Enums\PaymentMethod.cs" />
+    <Compile Include="Core\Entities\Product.cs" />
+    <Compile Include="Core\Entities\Category.cs" />
+    <Compile Include="Core\Entities\Table.cs" />
+    <Compile Include="Core\Entities\Staff.cs" />
+    <Compile Include="Core\Entities\Material.cs" />
+    <Compile Include="Core\Entities\Recipe.cs" />
+    <Compile Include="Core\Entities\Payment.cs" />
+    <Compile Include="Core\Entities\OrderItem.cs" />
+    <Compile Include="Core\Entities\Order.cs" />
+    <Compile Include="Business\Services\AuthService.cs" />
+    <Compile Include="Business\Services\InventoryService.cs" />
+    <Compile Include="Business\Services\OrderService.cs" />
+    <Compile Include="Business\Services\PrintService.cs" />
     <Compile Include="frmLogin.cs">
       <SubType>Form</SubType>
     </Compile>

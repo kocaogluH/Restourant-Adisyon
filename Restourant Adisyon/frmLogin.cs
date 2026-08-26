@@ -1,10 +1,13 @@
 using System;
 using System.Windows.Forms;
+using Restourant_Adisyon.Business.Services;
 
 namespace Restourant_Adisyon
 {
     public partial class frmLogin : Form
     {
+        private readonly AuthService _authService = new AuthService();
+
         public frmLogin()
         {
             InitializeComponent();
@@ -19,34 +22,42 @@ namespace Restourant_Adisyon
         {
             if (string.IsNullOrWhiteSpace(txtuser.Text))
             {
-                MessageBox.Show("Lütfen kullanıcı adı girin.", "Uyarı",
+                MessageBox.Show("Lütfen kullanıcı adı veya PIN kodunuzu girin.", "Uyarı",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 txtuser.Focus();
-                return;   
-            }
-
-            if (string.IsNullOrWhiteSpace(txtpass.Text))
-            {
-                MessageBox.Show("Lütfen şifre girin.", "Uyarı",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                txtpass.Focus();
                 return;
             }
 
-            if (MainClass.IsValidUser(txtuser.Text.Trim(), txtpass.Text.Trim()))
+            string inputUser = txtuser.Text.Trim();
+            string inputPass = txtpass.Text.Trim();
+
+            // 1. PIN ile Hızlı Giriş Kontrolü
+            if (inputUser.Length <= 4 && string.IsNullOrEmpty(inputPass) && _authService.QuickLoginWithPin(inputUser))
             {
-                this.Hide();
-                formMain form = new formMain();
-                form.FormClosed += (s, args) => this.Close();
-                form.Show();
+                OpenMainForm();
+                return;
+            }
+
+            // 2. Kullanıcı Adı ve Şifre ile Doğrulama
+            if (_authService.LoginWithPassword(inputUser, inputPass))
+            {
+                OpenMainForm();
             }
             else
             {
-                MessageBox.Show("Kullanıcı adı veya şifre hatalı!", "Giriş Başarısız",
+                MessageBox.Show("Kullanıcı adı, şifre veya PIN kodu hatalı!", "Giriş Başarısız",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 txtpass.Text = "";
                 txtpass.Focus();
             }
+        }
+
+        private void OpenMainForm()
+        {
+            this.Hide();
+            formMain form = new formMain();
+            form.FormClosed += (s, args) => this.Close();
+            form.Show();
         }
     }
 }
