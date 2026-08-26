@@ -288,8 +288,7 @@ namespace Restourant_Adisyon
         private void btnPos_Click(object sender, EventArgs e)
         {
             SetChecked(btnPos);
-            frmPOS frm = new frmPOS();
-            frm.Show();
+            AddControls(new frmPOS());
         }
 
         private void btnKitchen_Click(object sender, EventArgs e)
