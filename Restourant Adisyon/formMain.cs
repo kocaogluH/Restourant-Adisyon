@@ -50,7 +50,7 @@ namespace Restourant_Adisyon
                 lblUser.ForeColor = Color.FromArgb(50, 55, 89);
             }
 
-            // Sol menü tasarımını ve animasyonlarını uygula
+            // Sol menü tasarımını, oval butonları ve animasyonları uygula
             ApplyModernSidebarStyle();
 
             // Varsayılan sayfa: Ana Sayfa
@@ -70,14 +70,14 @@ namespace Restourant_Adisyon
         }
 
         /// <summary>
-        /// Sol menü butonlarına modern görünüm, yumuşak geçiş animasyonları (Animated=true)
-        /// ve aktif/hover renk stilleri uygular.
+        /// Sol menü butonlarını oval/dairesel (capsule pill) kapsül formuna dönüştürür,
+        /// taşma yapan beyaz dikdörtgen kenarları temizler ve yumuşak animasyonlar ekler.
         /// </summary>
         private void ApplyModernSidebarStyle()
         {
-            // Sol panel rengi (Modern koyu lacivert/indigo)
-            guna2Panel1.FillColor = Color.FromArgb(36, 40, 62);
-            guna2Panel1.Width = 210;
+            // Sol panel rengi (Şık koyu lacivert/indigo)
+            guna2Panel1.FillColor = Color.FromArgb(34, 38, 58);
+            guna2Panel1.Width = 215;
 
             // Üst başlık paneli rengi
             if (guna2CustomGradientPanel1 != null)
@@ -88,7 +88,7 @@ namespace Restourant_Adisyon
                 guna2CustomGradientPanel1.FillColor4 = Color.FromArgb(245, 247, 250);
             }
 
-            // Çakışan ekstra resim kutularını gizle (daha temiz görünüm)
+            // Çakışan ekstra resim kutularını gizle
             Guna2CirclePictureBox[] circles = new Guna2CirclePictureBox[]
             {
                 guna2CirclePictureBox2, guna2CirclePictureBox3, guna2CirclePictureBox4,
@@ -100,7 +100,7 @@ namespace Restourant_Adisyon
                 if (c != null) c.Visible = false;
             }
 
-            // Başlık yazısını Türkçeleştir ve şıklaştır
+            // Başlık yazısı
             if (label1 != null)
             {
                 label1.Text = "RESTORAN ADİSYON\nYönetim Sistemi";
@@ -125,9 +125,9 @@ namespace Restourant_Adisyon
                 Tuple.Create(btnSettings,   "Ayarlar")
             };
 
-            int startY = 160;
+            int startY = 155;
             int btnHeight = 42;
-            int spacing = 5;
+            int spacing = 6;
             int currentY = startY;
 
             foreach (var item in menuItems)
@@ -137,36 +137,51 @@ namespace Restourant_Adisyon
                 if (btn == null) continue;
 
                 btn.Text = "  " + title;
-                btn.Animated = true; // Guna2 donanım hızlandırmalı yumuşak animasyon
+                btn.Animated = true; // Guna2 yumuşak renk geçiş animasyonu
                 btn.ButtonMode = Guna.UI2.WinForms.Enums.ButtonMode.RadioButton;
                 btn.Size = new Size(190, btnHeight);
-                btn.Location = new Point(10, currentY);
-                btn.BorderRadius = 8;
+                btn.Location = new Point(12, currentY);
+
+                // ── OVAL / DAİRESEL KAPSÜL ŞEKİLLENDİRME ─────────────────────────
+                btn.AutoRoundedCorners = true; // Tam dairesel/oval kapsül yapar
+                btn.UseTransparentBackground = true;
+                btn.BorderThickness = 0;
+                btn.BorderColor = Color.Transparent;
+                btn.CustomBorderThickness = new Padding(0);
+                btn.CustomBorderColor = Color.Transparent;
+
+                // Tüm köşeleri serbest bırak (kareleştirme kısıtını kaldır)
+                if (btn.CustomizableEdges != null)
+                {
+                    btn.CustomizableEdges.TopLeft     = true;
+                    btn.CustomizableEdges.TopRight    = true;
+                    btn.CustomizableEdges.BottomLeft  = true;
+                    btn.CustomizableEdges.BottomRight = true;
+                }
+
                 btn.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
                 btn.ImageAlign = HorizontalAlignment.Left;
-                btn.ImageOffset = new Point(8, 0);
+                btn.ImageOffset = new Point(10, 0);
                 btn.TextOffset = new Point(8, 0);
 
-                // Normal Durum
+                // Normal Durum: Tamamen şeffaf arka plan (beyaz kare kutu kalmaz)
                 btn.FillColor = Color.Transparent;
-                btn.ForeColor = Color.FromArgb(175, 185, 210);
+                btn.ForeColor = Color.FromArgb(185, 195, 220);
 
-                // Üzerine Gelince (Hover) Animasyon Rengi
-                btn.HoverState.FillColor = Color.FromArgb(52, 58, 88);
+                // Hover (Üzerine Gelince) Durum: Şık oval kapsül vurgusu
+                btn.HoverState.FillColor = Color.FromArgb(55, 62, 92);
                 btn.HoverState.ForeColor = Color.White;
+                btn.HoverState.CustomBorderColor = Color.Transparent;
 
-                // Seçili / Aktif Durum (Checked) Rengi
-                btn.CheckedState.FillColor = Color.FromArgb(241, 85, 126); // Canlı Pembe/Kırmızı Accent
+                // Checked (Seçili/Aktif) Durum: Canlı Pembe/Kırmızı Oval Kapsül
+                btn.CheckedState.FillColor = Color.FromArgb(241, 85, 126);
                 btn.CheckedState.ForeColor = Color.White;
+                btn.CheckedState.CustomBorderColor = Color.Transparent;
 
                 currentY += btnHeight + spacing;
             }
         }
 
-        /// <summary>
-        /// Personel girişi yapıldığında gizlenen menü öğelerinden sonra
-        /// kalan butonları düzgün aralıklarla yeniden hizalar.
-        /// </summary>
         private void ReorderVisibleButtons()
         {
             Guna2Button[] navButtons = new Guna2Button[]
@@ -175,16 +190,16 @@ namespace Restourant_Adisyon
                 btnPos, btnKitchen, btnService, btnInventory, btnReports, btnSettings
             };
 
-            int startY = 160;
+            int startY = 155;
             int btnHeight = 42;
-            int spacing = 5;
+            int spacing = 6;
             int currentY = startY;
 
             foreach (var btn in navButtons)
             {
                 if (btn != null && btn.Visible)
                 {
-                    btn.Location = new Point(10, currentY);
+                    btn.Location = new Point(12, currentY);
                     currentY += btnHeight + spacing;
                 }
             }
