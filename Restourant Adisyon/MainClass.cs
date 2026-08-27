@@ -12,7 +12,7 @@ namespace Restourant_Adisyon
     /// Uygulamanın merkez sınıfı. SQLite veritabanı bağlantısını, sorgu yardımcılarını
     /// ve ortak UI yardımcılarını barındırır.
     /// </summary>
-    class MainClass
+    public class MainClass
     {
         // Veritabanı dosyası uygulamanın yanında RM.db olarak saklanır
         public static readonly string DbPath =
@@ -124,6 +124,14 @@ CREATE TABLE IF NOT EXISTS tblRecipe (
     proID     INTEGER,
     mID       INTEGER,
     qtyNeeded REAL DEFAULT 0
+);
+
+CREATE TABLE IF NOT EXISTS tblPayments (
+    PaymentID INTEGER PRIMARY KEY AUTOINCREMENT,
+    OrderID   INTEGER,
+    Amount    REAL,
+    Method    TEXT,
+    PaidAt    TEXT
 );
 
 INSERT OR IGNORE INTO users (rowid, username, upass, uNAME, uRole)

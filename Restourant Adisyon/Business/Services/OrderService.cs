@@ -36,7 +36,7 @@ namespace Restourant_Adisyon.Business.Services
 
             // Load Items
             string qryItems = @"SELECT d.*, p.pName FROM tblDetails d
-                                INNER JOIN products p ON p.pID = d.proID
+                                LEFT JOIN products p ON p.pID = d.proID
                                 WHERE d.MainID = @id";
             DataTable dtItems = MainClass.GetDataTable(qryItems, ht);
             foreach (DataRow row in dtItems.Rows)
