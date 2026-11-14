@@ -1,8 +1,12 @@
 using System;
 using System.Collections;
 using System.Data;
+using System.Drawing;
 using System.Windows.Forms;
+using Restourant_Adisyon.Business.Managers;
 using Restourant_Adisyon.Business.Services;
+using Restourant_Adisyon.UI.Controls;
+using Restourant_Adisyon.UI.Theme;
 
 namespace Restourant_Adisyon
 {
@@ -15,29 +19,81 @@ namespace Restourant_Adisyon
 
         private void frmInventory_Load(object sender, EventArgs e)
         {
+            ApplyTheme();
             LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
+            ThemeManager.Instance.OnThemeChanged += (s, args) => ApplyTheme();
             ApplyLocalization();
 
             if (dgvMaterials != null)
-                Restourant_Adisyon.UI.Controls.GridStyler.Apply(dgvMaterials, "Henüz malzeme eklenmemiş. Eklemek için yukarıdaki formu kullanın.");
+                GridStyler.Apply(dgvMaterials, "Henüz malzeme eklenmemiş. Eklemek için formu kullanın.");
             if (dgvRecipe != null)
-                Restourant_Adisyon.UI.Controls.GridStyler.Apply(dgvRecipe, "Bu ürün için reçete eklenmemiş.");
-
-            if (btnAddMaterial != null)
-                Restourant_Adisyon.UI.Theme.AppTheme.StyleButton(btnAddMaterial, Restourant_Adisyon.UI.Theme.ButtonRole.Primary);
+                GridStyler.Apply(dgvRecipe, "Bu ürün için reçete eklenmemiş.");
 
             LoadMaterials();
             LoadProductsForRecipe();
         }
 
+        private void ApplyTheme()
+        {
+            this.BackColor = AppTheme.Background;
+
+            if (txtMName != null)
+            {
+                txtMName.BorderRadius = 8;
+                txtMName.BorderColor = AppTheme.BorderColor;
+                txtMName.FillColor = AppTheme.CardBackground;
+                txtMName.ForeColor = AppTheme.TextPrimary;
+                txtMName.PlaceholderText = "Örn: Un, Domates, Kıyma...";
+            }
+
+            if (txtMQty != null)
+            {
+                txtMQty.BorderRadius = 8;
+                txtMQty.BorderColor = AppTheme.BorderColor;
+                txtMQty.FillColor = AppTheme.CardBackground;
+                txtMQty.ForeColor = AppTheme.TextPrimary;
+            }
+
+            if (txtMUnit != null)
+            {
+                txtMUnit.BorderRadius = 8;
+                txtMUnit.BorderColor = AppTheme.BorderColor;
+                txtMUnit.FillColor = AppTheme.CardBackground;
+                txtMUnit.ForeColor = AppTheme.TextPrimary;
+                txtMUnit.PlaceholderText = "kg, lt, adet...";
+            }
+
+            if (cbProduct != null)
+            {
+                cbProduct.BorderRadius = 8;
+                cbProduct.BorderColor = AppTheme.BorderColor;
+                cbProduct.FillColor = AppTheme.CardBackground;
+                cbProduct.ForeColor = AppTheme.TextPrimary;
+            }
+
+            if (btnAddMaterial != null)
+            {
+                btnAddMaterial.BorderRadius = 8;
+                btnAddMaterial.FillColor = AppTheme.BrandPrimary;
+                btnAddMaterial.ForeColor = Color.White;
+                btnAddMaterial.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+                btnAddMaterial.Cursor = Cursors.Hand;
+            }
+
+            if (label1 != null) { label1.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold); label1.ForeColor = AppTheme.TextSecondary; }
+            if (label2 != null) { label2.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold); label2.ForeColor = AppTheme.TextSecondary; }
+            if (label3 != null) { label3.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold); label3.ForeColor = AppTheme.TextSecondary; }
+            if (label4 != null) { label4.Font = new Font("Segoe UI", 12F, FontStyle.Bold); label4.ForeColor = AppTheme.TextPrimary; }
+        }
+
         private void ApplyLocalization()
         {
             var loc = LocalizationService.Instance;
-            if (label1 != null) label1.Text = loc.GetString("Material_Name");
-            if (label2 != null) label2.Text = loc.GetString("Quantity");
-            if (label3 != null) label3.Text = loc.GetString("Unit");
-            if (label4 != null) label4.Text = loc.GetString("Recipe_Header");
-            if (btnAddMaterial != null) btnAddMaterial.Text = loc.GetString("Add_Material");
+            if (label1 != null) label1.Text = loc.GetString("Material_Name") ?? "Malzeme Adı";
+            if (label2 != null) label2.Text = loc.GetString("Quantity") ?? "Miktar";
+            if (label3 != null) label3.Text = loc.GetString("Unit") ?? "Birim";
+            if (label4 != null) label4.Text = loc.GetString("Recipe_Header") ?? "📦 Ürün Reçete Eşleştirme";
+            if (btnAddMaterial != null) btnAddMaterial.Text = loc.GetString("Add_Material") ?? "➕ Malzeme Ekle";
         }
 
         private void LoadMaterials()

@@ -22,7 +22,14 @@ namespace Restourant_Adisyon.Mmodel
         private void frmTableSelect_Load(object sender, EventArgs e)
         {
             this.BackColor = AppTheme.Background;
-            if (label1 != null) label1.ForeColor = AppTheme.BrandPrimary;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            if (label1 != null)
+            {
+                label1.Text = "🪑 Masa Seçimi";
+                label1.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+                label1.ForeColor = AppTheme.TextPrimary;
+            }
 
             flowLayoutPanel1.Controls.Clear();
             flowLayoutPanel1.BackColor = Color.Transparent;
@@ -38,7 +45,7 @@ namespace Restourant_Adisyon.Mmodel
                 Guna2Button b = new Guna2Button
                 {
                     Text = $"{t.TableName}\n\n👥 {t.Capacity} Kişi\n{statusText}",
-                    Width = 150,
+                    Width = 155,
                     Height = 130,
                     BorderRadius = 14,
                     FillColor = AppTheme.CardBackground,

@@ -4,9 +4,11 @@ using System.Data;
 using System.Drawing;
 using System.Drawing.Printing;
 using System.Windows.Forms;
+using Guna.UI2.WinForms;
 using Restourant_Adisyon.Business.Services;
 using Restourant_Adisyon.Core.Entities;
 using Restourant_Adisyon.Core.Enums;
+using Restourant_Adisyon.UI.Theme;
 
 namespace Restourant_Adisyon.Mmodel
 {
@@ -16,6 +18,10 @@ namespace Restourant_Adisyon.Mmodel
         public double amt;
         public int    MainID;
         public bool   isSuccess = false;
+        private PaymentMethod _selectedMethod = PaymentMethod.Nakit;
+
+        private FlowLayoutPanel _flpQuickCash;
+
 
         public frmCheckout()
         {
@@ -24,11 +30,9 @@ namespace Restourant_Adisyon.Mmodel
 
         private void frmCheckout_Load(object sender, EventArgs e)
         {
+            SetupModernCheckoutUI();
             LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
             ApplyLocalization();
-
-            if (btnSave != null)
-                Restourant_Adisyon.UI.Theme.AppTheme.StyleButton(btnSave, Restourant_Adisyon.UI.Theme.ButtonRole.Success);
 
             Order order = _orderService.GetOrderById(MainID);
             if (order != null)
@@ -39,16 +43,132 @@ namespace Restourant_Adisyon.Mmodel
             {
                 txtBillAmount.Text = amt.ToString("N2");
             }
+
+            txtReceived.Focus();
+        }
+
+        private void SetupModernCheckoutUI()
+        {
+            this.BackColor = AppTheme.CardBackground;
+            this.FormBorderStyle = FormBorderStyle.None;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            // 1. Üst Başlık Paneli
+            if (guna2Panel1 != null)
+            {
+                guna2Panel1.FillColor = AppTheme.SidebarBackground;
+                guna2Panel1.Height = 70;
+
+                if (label1 != null)
+                {
+                    label1.Text = "💳 Hesap Kapatma & Ödeme";
+                    label1.Font = new Font("Segoe UI", 13.5F, FontStyle.Bold);
+                    label1.ForeColor = Color.White;
+                    label1.Location = new Point(20, 22);
+                }
+            }
+
+            // 2. Metin Kutuları ve Etiketler
+            if (txtBillAmount != null)
+            {
+                txtBillAmount.BorderRadius = 8;
+                txtBillAmount.BorderColor = AppTheme.BorderColor;
+                txtBillAmount.FillColor = Color.FromArgb(248, 250, 252);
+                txtBillAmount.ForeColor = AppTheme.BrandPrimary;
+                txtBillAmount.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+                txtBillAmount.ReadOnly = true;
+            }
+
+            if (txtReceived != null)
+            {
+                txtReceived.BorderRadius = 8;
+                txtReceived.BorderColor = AppTheme.BrandPrimary;
+                txtReceived.FillColor = Color.White;
+                txtReceived.ForeColor = AppTheme.TextPrimary;
+                txtReceived.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            }
+
+            if (txtChange != null)
+            {
+                txtChange.BorderRadius = 8;
+                txtChange.BorderColor = AppTheme.BorderColor;
+                txtChange.FillColor = Color.FromArgb(248, 250, 252);
+                txtChange.ForeColor = AppTheme.Success;
+                txtChange.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+                txtChange.ReadOnly = true;
+            }
+
+            // 3. Ödeme Butonu
+            if (btnSave != null)
+            {
+                btnSave.BorderRadius = 8;
+                btnSave.FillColor = AppTheme.Success;
+                btnSave.ForeColor = Color.White;
+                btnSave.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+                btnSave.Cursor = Cursors.Hand;
+            }
+
+            // 4. Hızlı Nakit Tuşları (Eğer henüz eklenmediyse)
+            if (_flpQuickCash == null)
+            {
+                _flpQuickCash = new FlowLayoutPanel
+                {
+                    Location = new Point(txtReceived.Left, txtReceived.Bottom + 8),
+                    Size = new Size(txtReceived.Width, 38),
+                    FlowDirection = FlowDirection.LeftToRight,
+                    BackColor = Color.Transparent
+                };
+                this.Controls.Add(_flpQuickCash);
+
+                int[] presets = new int[] { 50, 100, 200, 500 };
+                foreach (int p in presets)
+                {
+                    Guna2Button btnP = new Guna2Button
+                    {
+                        Text = p + " ₺",
+                        Size = new Size(58, 30),
+                        BorderRadius = 6,
+                        FillColor = Color.FromArgb(241, 245, 249),
+                        ForeColor = Color.FromArgb(30, 41, 59),
+                        Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
+                        Margin = new Padding(0, 0, 4, 0),
+                        Cursor = Cursors.Hand
+                    };
+                    btnP.Click += (s, ev) =>
+                    {
+                        txtReceived.Text = p.ToString();
+                        txtReceived_TextChanged(null, null);
+                    };
+                    _flpQuickCash.Controls.Add(btnP);
+                }
+
+                Guna2Button btnExact = new Guna2Button
+                {
+                    Text = "Tam",
+                    Size = new Size(50, 30),
+                    BorderRadius = 6,
+                    FillColor = AppTheme.BrandPrimary,
+                    ForeColor = Color.White,
+                    Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
+                    Cursor = Cursors.Hand
+                };
+                btnExact.Click += (s, ev) =>
+                {
+                    txtReceived.Text = txtBillAmount.Text;
+                    txtReceived_TextChanged(null, null);
+                };
+                _flpQuickCash.Controls.Add(btnExact);
+            }
         }
 
         private void ApplyLocalization()
         {
             var loc = LocalizationService.Instance;
-            if (label1 != null) label1.Text = loc.GetString("Checkout_Title");
-            if (label2 != null) label2.Text = loc.GetString("Bill_Amount");
-            if (label3 != null) label3.Text = loc.GetString("Received_Amount");
-            if (label4 != null) label4.Text = loc.GetString("Change_Amount");
-            if (btnSave != null) btnSave.Text = loc.GetString("Pay_Bill");
+            if (label1 != null) label1.Text = loc.GetString("Checkout_Title") ?? "💳 Hesap Kapatma & Ödeme";
+            if (label2 != null) label2.Text = loc.GetString("Bill_Amount") ?? "Hesap Tutarı";
+            if (label3 != null) label3.Text = loc.GetString("Received_Amount") ?? "Alınan Tutar";
+            if (label4 != null) label4.Text = loc.GetString("Change_Amount") ?? "Para Üstü";
+            if (btnSave != null) btnSave.Text = loc.GetString("Pay_Bill") ?? "✅ Ödemeyi Tamamla";
         }
 
         private void txtReceived_TextChanged(object sender, EventArgs e)
@@ -60,7 +180,7 @@ namespace Restourant_Adisyon.Mmodel
             if (received >= 0)
             {
                 double change = received - amtVal;
-                txtChange.Text = change.ToString("N2");
+                txtChange.Text = change >= 0 ? change.ToString("N2") : "0.00";
             }
         }
 
@@ -84,7 +204,7 @@ namespace Restourant_Adisyon.Mmodel
 
             // Split Bill / Parçalı Ödeme İşleme
             decimal remainingAmount;
-            bool success = _orderService.AddPayment(MainID, received, PaymentMethod.Nakit, out remainingAmount);
+            bool success = _orderService.AddPayment(MainID, received, _selectedMethod, out remainingAmount);
 
             if (success)
             {

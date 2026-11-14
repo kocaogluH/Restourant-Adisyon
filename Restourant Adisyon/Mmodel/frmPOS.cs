@@ -33,6 +33,12 @@ namespace Restourant_Adisyon.Mmodel
         private Label _lblSubtotal;
         private Label _lblTax;
 
+        // Modern UI Rozetleri
+        private Label _lblBrand;
+        private Label _lblBrandSub;
+        private Guna2Button _badgeTable;
+        private Guna2Button _badgeWaiter;
+
         private void btnExit_Click(object sender, EventArgs e)
         {
             this.Close();
@@ -40,19 +46,13 @@ namespace Restourant_Adisyon.Mmodel
 
         private void frmPOS_Load(object sender, EventArgs e)
         {
+            SetupModernHeader();
             ApplyThemeAndStyling();
 
             LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
             ThemeManager.Instance.OnThemeChanged += (s, theme) => ApplyThemeAndStyling();
 
             ApplyLocalization();
-
-            // Buton Hiyerarşisi (Button Roles)
-            if (btnCheckout != null) AppTheme.StyleButton(btnCheckout, ButtonRole.Success); // Yeşil
-            if (btnKot != null)      AppTheme.StyleButton(btnKot, ButtonRole.Primary);      // Pembe
-            if (btnNew != null)      AppTheme.StyleButton(btnNew, ButtonRole.Info);         // Mavi
-            if (btnBill != null)     AppTheme.StyleButton(btnBill, ButtonRole.Secondary);
-
             SetupReceiptPanel();
 
             ProductPanel.Controls.Clear();
@@ -60,6 +60,169 @@ namespace Restourant_Adisyon.Mmodel
 
             // Barkod desteği: form-level KeyPreview etkinleştir
             this.KeyPreview = true;
+        }
+
+        private void SetupModernHeader()
+        {
+            if (guna2Panel1 == null) return;
+
+            guna2Panel1.FillColor = AppTheme.SidebarBackground;
+            guna2Panel1.Height = 85;
+
+            // Eski pikselli resmi gizle
+            if (pictureBox1 != null) pictureBox1.Visible = false;
+
+            // 1. Marka Başlığı
+            if (_lblBrand == null)
+            {
+                _lblBrand = new Label
+                {
+                    Text = "⚡ RESTO POS",
+                    Font = new Font("Segoe UI", 13.5F, FontStyle.Bold),
+                    ForeColor = Color.White,
+                    Location = new Point(20, 18),
+                    AutoSize = true,
+                    BackColor = Color.Transparent
+                };
+                guna2Panel1.Controls.Add(_lblBrand);
+
+                _lblBrandSub = new Label
+                {
+                    Text = "Hızlı Adisyon & Satış Terminali",
+                    Font = new Font("Segoe UI", 8.5F),
+                    ForeColor = Color.FromArgb(148, 163, 184),
+                    Location = new Point(22, 46),
+                    AutoSize = true,
+                    BackColor = Color.Transparent
+                };
+                guna2Panel1.Controls.Add(_lblBrandSub);
+            }
+
+            // 2. Masa ve Garson Rozetleri (Dinamik Gösterim)
+            if (_badgeTable == null)
+            {
+                _badgeTable = new Guna2Button
+                {
+                    Text = "🪑 Masa Seçilmedi",
+                    Size = new Size(140, 36),
+                    Location = new Point(230, 24),
+                    BorderRadius = 18,
+                    FillColor = Color.FromArgb(30, 41, 59),
+                    ForeColor = Color.FromArgb(226, 232, 240),
+                    Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                    Cursor = Cursors.Hand
+                };
+                _badgeTable.Click += (s, e) => btnDin_Click(s, e);
+                guna2Panel1.Controls.Add(_badgeTable);
+
+                _badgeWaiter = new Guna2Button
+                {
+                    Text = "👤 Garson Seçilmedi",
+                    Size = new Size(140, 36),
+                    Location = new Point(378, 24),
+                    BorderRadius = 18,
+                    FillColor = Color.FromArgb(30, 41, 59),
+                    ForeColor = Color.FromArgb(226, 232, 240),
+                    Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                    Cursor = Cursors.Hand
+                };
+                _badgeWaiter.Click += (s, e) =>
+                {
+                    frmWaiterSelect frmW = new frmWaiterSelect();
+                    MainClass.BlurBackground(frmW);
+                    if (!string.IsNullOrEmpty(frmW.waiterName))
+                    {
+                        lblWaiter.Text = frmW.waiterName;
+                        UpdateBadges();
+                    }
+                };
+                guna2Panel1.Controls.Add(_badgeWaiter);
+            }
+
+            // 3. Servis Tipi Butonları (Masada, Gel Al, Paket) Modern Pill Tasarımı
+            StyleServiceButton(btnDin, "🍽️ Masada", 528);
+            StyleServiceButton(btnTake, "🥡 Gel Al", 632);
+            StyleServiceButton(btnDelivery, "🛵 Paket", 736);
+
+            // 4. İşlem Butonları (New, Bill, KOT, Checkout)
+            StyleActionButton(btnNew, "➕ Yeni", 848, AppTheme.Secondary, Color.White);
+            StyleActionButton(btnBill, "📋 Adisyonlar", 934, Color.FromArgb(71, 85, 105), Color.White);
+            StyleActionButton(btnKot, "🍳 Mutfak (KOT)", 1050, AppTheme.BrandPrimary, Color.White);
+            StyleActionButton(btnCheckout, "💳 Ödeme Al", 1195, AppTheme.Success, Color.White);
+
+            UpdateServiceTypeButtons();
+            UpdateBadges();
+        }
+
+        private void StyleServiceButton(Button btn, string text, int xLocation)
+        {
+            if (btn == null) return;
+            btn.Text = text;
+            btn.Size = new Size(98, 38);
+            btn.Location = new Point(xLocation, 23);
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 0;
+            btn.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btn.Cursor = Cursors.Hand;
+        }
+
+        private void StyleActionButton(Button btn, string text, int xLocation, Color bgColor, Color fgColor)
+        {
+            if (btn == null) return;
+            btn.Text = text;
+            btn.Size = new Size(btn == btnKot ? 138 : (btn == btnCheckout ? 124 : (btn == btnBill ? 110 : 80)), 40);
+            btn.Location = new Point(xLocation, 22);
+            btn.BackColor = bgColor;
+            btn.ForeColor = fgColor;
+            btn.FlatStyle = FlatStyle.Flat;
+            btn.FlatAppearance.BorderSize = 0;
+            btn.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
+            btn.Cursor = Cursors.Hand;
+        }
+
+        private void UpdateServiceTypeButtons()
+        {
+            Color activeBg = AppTheme.BrandPrimary; // Rose Red
+            Color inactiveBg = Color.FromArgb(51, 65, 85); // Slate 700
+
+            if (btnDin != null)      btnDin.BackColor      = OrderType == "Masada" ? activeBg : inactiveBg;
+            if (btnTake != null)     btnTake.BackColor     = OrderType == "Gel-Al" || OrderType == "Gel Al" ? activeBg : inactiveBg;
+            if (btnDelivery != null) btnDelivery.BackColor = OrderType == "Paket" ? activeBg : inactiveBg;
+        }
+
+        private void UpdateBadges()
+        {
+            if (_badgeTable != null)
+            {
+                if (!string.IsNullOrEmpty(lblTable.Text))
+                {
+                    _badgeTable.Text = "🪑 " + lblTable.Text;
+                    _badgeTable.FillColor = Color.FromArgb(16, 185, 129); // Emerald
+                    _badgeTable.ForeColor = Color.White;
+                }
+                else
+                {
+                    _badgeTable.Text = "🪑 Masa Seç";
+                    _badgeTable.FillColor = Color.FromArgb(30, 41, 59);
+                    _badgeTable.ForeColor = Color.FromArgb(203, 213, 225);
+                }
+            }
+
+            if (_badgeWaiter != null)
+            {
+                if (!string.IsNullOrEmpty(lblWaiter.Text))
+                {
+                    _badgeWaiter.Text = "👤 " + lblWaiter.Text;
+                    _badgeWaiter.FillColor = Color.FromArgb(37, 99, 235); // Blue
+                    _badgeWaiter.ForeColor = Color.White;
+                }
+                else
+                {
+                    _badgeWaiter.Text = "👤 Garson Seç";
+                    _badgeWaiter.FillColor = Color.FromArgb(30, 41, 59);
+                    _badgeWaiter.ForeColor = Color.FromArgb(203, 213, 225);
+                }
+            }
         }
 
         private void ApplyThemeAndStyling()
@@ -74,7 +237,7 @@ namespace Restourant_Adisyon.Mmodel
             }
 
             if (guna2DataGridView1 != null)
-                GridStyler.Apply(guna2DataGridView1, "Cart_Empty");
+                GridStyler.Apply(guna2DataGridView1, "Sepetiniz boş. Menüden ürün seçin veya barkod okutun.");
 
             if (lblTotal != null)
                 lblTotal.ForeColor = AppTheme.BrandPrimary;
@@ -84,10 +247,12 @@ namespace Restourant_Adisyon.Mmodel
                 txtSearch.FillColor = AppTheme.CardBackground;
                 txtSearch.ForeColor = AppTheme.TextPrimary;
                 txtSearch.BorderColor = AppTheme.BorderColor;
+                txtSearch.BorderRadius = 8;
+                txtSearch.PlaceholderText = "🔍 Ürün ara veya barkod okut...";
             }
 
-            if (lblTable != null)  lblTable.ForeColor  = AppTheme.BrandPrimary;
-            if (lblWaiter != null) lblWaiter.ForeColor = AppTheme.TextSecondary;
+            UpdateServiceTypeButtons();
+            UpdateBadges();
         }
 
         private void SetupReceiptPanel()
@@ -172,14 +337,7 @@ namespace Restourant_Adisyon.Mmodel
         private void ApplyLocalization()
         {
             var loc = LocalizationService.Instance;
-            if (btnNew != null)      btnNew.Text      = loc.GetString("POS_NewOrder");
-            if (btnDin != null)      btnDin.Text      = loc.GetString("POS_DineIn");
-            if (btnTake != null)     btnTake.Text     = loc.GetString("POS_TakeAway");
-            if (btnDelivery != null) btnDelivery.Text = loc.GetString("POS_Delivery");
-            if (btnKot != null)      btnKot.Text      = loc.GetString("POS_KOT");
-            if (btnBill != null)     btnBill.Text     = loc.GetString("POS_BillList");
-            if (btnCheckout != null) btnCheckout.Text = loc.GetString("POS_Checkout");
-            if (txtSearch != null)   txtSearch.PlaceholderText = loc.GetString("Search");
+            if (txtSearch != null) txtSearch.PlaceholderText = loc.GetString("Search") ?? "🔍 Ürün ara veya barkod okut...";
             AddCategory();
         }
 
@@ -188,7 +346,7 @@ namespace Restourant_Adisyon.Mmodel
         {
             CategoryPanel.Controls.Clear();
 
-            string allText = LocalizationService.Instance.GetString("All_Categories");
+            string allText = LocalizationService.Instance.GetString("All_Categories") ?? "🌟 Tümü";
             Guna2Button b2 = new Guna2Button
             {
                 FillColor = AppTheme.Secondary,
@@ -231,9 +389,9 @@ namespace Restourant_Adisyon.Mmodel
 
         private void b_click(object sender, EventArgs e)
         {
-            string allText = LocalizationService.Instance.GetString("All_Categories");
+            string allText = LocalizationService.Instance.GetString("All_Categories") ?? "🌟 Tümü";
             Guna2Button b = (Guna2Button)sender;
-            if (b.Text == allText || b.Text == "Tümü" || b.Text == "All")
+            if (b.Text == allText || b.Text == "Tümü" || b.Text == "All" || b.Text.Contains("Tümü"))
             {
                 foreach (var item in ProductPanel.Controls)
                     ((ucProduct)item).Visible = true;
@@ -408,6 +566,8 @@ namespace Restourant_Adisyon.Mmodel
             MainID = 0;
             lblTotal.Text = "0.00";
             OrderType = "Masada";
+            UpdateServiceTypeButtons();
+            UpdateBadges();
             GetTotal();
         }
 
@@ -415,27 +575,35 @@ namespace Restourant_Adisyon.Mmodel
         {
             lblTable.Visible = false; lblWaiter.Visible = false;
             OrderType = "Paket";
+            UpdateServiceTypeButtons();
         }
 
         private void btnTake_Click(object sender, EventArgs e)
         {
             lblTable.Visible = false; lblWaiter.Visible = false;
             OrderType = "Gel-Al";
+            UpdateServiceTypeButtons();
         }
 
         private void btnDin_Click(object sender, EventArgs e)
         {
             OrderType = "Masada";
+            UpdateServiceTypeButtons();
 
             frmTableSelect frm = new frmTableSelect();
             MainClass.BlurBackground(frm);
             lblTable.Text    = frm.TableName ?? "";
             lblTable.Visible = !string.IsNullOrEmpty(frm.TableName);
 
-            frmWaiterSelect frm2 = new frmWaiterSelect();
-            MainClass.BlurBackground(frm2);
-            lblWaiter.Text    = frm2.waiterName ?? "";
-            lblWaiter.Visible = !string.IsNullOrEmpty(frm2.waiterName);
+            if (!string.IsNullOrEmpty(frm.TableName))
+            {
+                frmWaiterSelect frm2 = new frmWaiterSelect();
+                MainClass.BlurBackground(frm2);
+                lblWaiter.Text    = frm2.waiterName ?? "";
+                lblWaiter.Visible = !string.IsNullOrEmpty(frm2.waiterName);
+            }
+
+            UpdateBadges();
         }
 
         private void btnKot_Click(object sender, EventArgs e)
@@ -612,6 +780,7 @@ namespace Restourant_Adisyon.Mmodel
                     item["amount"]
                 });
             }
+            UpdateBadges();
             GetTotal();
         }
     }

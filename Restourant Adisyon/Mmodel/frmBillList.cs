@@ -1,7 +1,10 @@
 using System;
 using System.Collections;
 using System.Data;
+using System.Drawing;
 using System.Windows.Forms;
+using Restourant_Adisyon.UI.Controls;
+using Restourant_Adisyon.UI.Theme;
 
 namespace Restourant_Adisyon.Mmodel
 {
@@ -15,6 +18,28 @@ namespace Restourant_Adisyon.Mmodel
         public int MainID = 0;
 
         private void frmBillList_Load(object sender, EventArgs e)
+        {
+            if (label1 != null)
+            {
+                label1.Text = "📋 Açık Adisyonlar Listesi";
+            }
+
+            if (guna2DataGridView1 != null)
+            {
+                GridStyler.Apply(guna2DataGridView1, "Şu anda açık adisyon bulunmuyor.");
+            }
+
+            // Save butonunu bu ekranda gizleyebiliriz veya yenileme butonu yapabiliriz
+            if (btnSave != null)
+            {
+                btnSave.Text = "🔄 Yenile";
+                AppTheme.StyleButton(btnSave, ButtonRole.Info);
+            }
+
+            LoadData();
+        }
+
+        public override void btnSave_Click(object sender, EventArgs e)
         {
             LoadData();
         }

@@ -16,6 +16,9 @@ namespace Restourant_Adisyon.Vview
 
         private void frmCategoryview_Load(object sender, EventArgs e)
         {
+            if (label2 != null) label2.Text = "📁 Kategori Yönetimi";
+            if (label1 != null) label1.Text = "Menü kategorilerini buradan ekleyebilir, düzenleyebilir ve silebilirsiniz.";
+
             if (guna2DataGridView1 != null)
                 GridStyler.Apply(guna2DataGridView1, "Henüz kategori eklenmemiş. Eklemek için '+' butonuna tıklayın.");
 
@@ -43,7 +46,7 @@ namespace Restourant_Adisyon.Vview
 
         private void gv_Cell(object sender, DataGridViewCellFormattingEventArgs e)
         {
-            // Soru numarası sütunu
+            // Sıra numarası sütunu
             int count = 0;
             foreach (DataGridViewRow row in guna2DataGridView1.Rows)
             {
@@ -65,9 +68,7 @@ namespace Restourant_Adisyon.Vview
 
         private void guna2DataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex < 0) return;
-
-            if (guna2DataGridView1.CurrentCell.OwningColumn.Name == "dgvedit")
+            if (guna2DataGridView1.CurrentCell?.OwningColumn.Name == "dgvedit")
             {
                 frmCategoryAdd frm = new frmCategoryAdd();
                 frm.id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
@@ -75,19 +76,19 @@ namespace Restourant_Adisyon.Vview
                 MainClass.BlurBackground(frm);
                 GetData();
             }
-            if (guna2DataGridView1.CurrentCell.OwningColumn.Name == "dgvdel")
+            if (guna2DataGridView1.CurrentCell?.OwningColumn.Name == "dgvdel")
             {
                 guna2MessageDialog1.Icon = Guna.UI2.WinForms.MessageDialogIcon.Question;
                 guna2MessageDialog1.Buttons = Guna.UI2.WinForms.MessageDialogButtons.YesNo;
-                if (guna2MessageDialog1.Show("Bu kategoriyi silmek istediğinize emin misiniz?") == DialogResult.Yes)
+                if (guna2MessageDialog1.Show("Bu kategoriyi silmek istediğinizden emin misiniz?") == DialogResult.Yes)
                 {
                     int id = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
-                    string qry = "DELETE FROM category WHERE catID=" + id;
+                    string qry = "DELETE FROM category WHERE catID = " + id;
                     Hashtable ht = new Hashtable();
                     MainClass.Sql(qry, ht);
                     guna2MessageDialog1.Icon = Guna.UI2.WinForms.MessageDialogIcon.Information;
                     guna2MessageDialog1.Buttons = Guna.UI2.WinForms.MessageDialogButtons.OK;
-                    guna2MessageDialog1.Show("Kategori başarıyla silindi.");
+                    guna2MessageDialog1.Show("Kategori başarıyla silindi");
                     GetData();
                 }
             }

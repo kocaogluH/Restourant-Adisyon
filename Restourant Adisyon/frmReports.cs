@@ -2,9 +2,11 @@ using System;
 using System.Collections;
 using System.Data;
 using System.Drawing;
-using System.Drawing.Printing;
 using System.Windows.Forms;
+using Restourant_Adisyon.Business.Managers;
 using Restourant_Adisyon.Business.Services;
+using Restourant_Adisyon.UI.Controls;
+using Restourant_Adisyon.UI.Theme;
 
 namespace Restourant_Adisyon
 {
@@ -20,30 +22,60 @@ namespace Restourant_Adisyon
             if (dtStart != null) dtStart.Value = DateTime.Today;
             if (dtEnd != null)   dtEnd.Value   = DateTime.Today.AddDays(1).AddSeconds(-1);
 
+            ApplyTheme();
             LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
+            ThemeManager.Instance.OnThemeChanged += (s, args) => ApplyTheme();
             ApplyLocalization();
 
             if (dgvTopProducts != null)
-                Restourant_Adisyon.UI.Controls.GridStyler.Apply(dgvTopProducts, "Bu tarih aralığında satılan ürün bulunmuyor.");
+                GridStyler.Apply(dgvTopProducts, "Bu tarih aralığında satılan ürün bulunmuyor.");
             if (dgvDailySales != null)
-                Restourant_Adisyon.UI.Controls.GridStyler.Apply(dgvDailySales, "Bu tarih aralığında tamamlanan sipariş bulunmuyor.");
-
-            if (btnFilter != null)
-                Restourant_Adisyon.UI.Theme.AppTheme.StyleButton(btnFilter, Restourant_Adisyon.UI.Theme.ButtonRole.Info);
+                GridStyler.Apply(dgvDailySales, "Bu tarih aralığında tamamlanan sipariş bulunmuyor.");
 
             LoadSummaryCards();
             LoadTopProducts();
             LoadDailySales();
         }
 
+        private void ApplyTheme()
+        {
+            this.BackColor = AppTheme.Background;
+
+            if (btnFilter != null)
+            {
+                btnFilter.BorderRadius = 8;
+                btnFilter.FillColor = AppTheme.BrandPrimary;
+                btnFilter.ForeColor = Color.White;
+                btnFilter.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+                btnFilter.Cursor = Cursors.Hand;
+            }
+
+            if (lblTotalRevenue != null)
+            {
+                lblTotalRevenue.ForeColor = AppTheme.BrandPrimary;
+                lblTotalRevenue.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+            }
+
+            if (lblTotalOrders != null)
+            {
+                lblTotalOrders.ForeColor = AppTheme.Success;
+                lblTotalOrders.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+            }
+
+            if (label1 != null) { label1.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold); label1.ForeColor = AppTheme.TextSecondary; }
+            if (label3 != null) { label3.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold); label3.ForeColor = AppTheme.TextSecondary; }
+            if (label5 != null) { label5.Font = new Font("Segoe UI", 12F, FontStyle.Bold); label5.ForeColor = AppTheme.TextPrimary; }
+            if (label6 != null) { label6.Font = new Font("Segoe UI", 12F, FontStyle.Bold); label6.ForeColor = AppTheme.TextPrimary; }
+        }
+
         private void ApplyLocalization()
         {
             var loc = LocalizationService.Instance;
-            if (label1 != null) label1.Text = loc.GetString("Total_Revenue");
-            if (label3 != null) label3.Text = loc.GetString("Total_Orders");
-            if (label5 != null) label5.Text = loc.GetString("Top_Products");
-            if (label6 != null) label6.Text = loc.GetString("Daily_Sales");
-            if (btnFilter != null) btnFilter.Text = loc.GetString("Search");
+            if (label1 != null) label1.Text = loc.GetString("Total_Revenue") ?? "💰 Toplam Ciro";
+            if (label3 != null) label3.Text = loc.GetString("Total_Orders") ?? "🧾 Toplam Sipariş";
+            if (label5 != null) label5.Text = loc.GetString("Top_Products") ?? "🏆 En Çok Satan Ürünler";
+            if (label6 != null) label6.Text = loc.GetString("Daily_Sales") ?? "📊 Günlük Satış Hareketleri";
+            if (btnFilter != null) btnFilter.Text = loc.GetString("Search") ?? "🔍 Raporu Getir";
         }
 
         private void btnFilter_Click(object sender, EventArgs e)

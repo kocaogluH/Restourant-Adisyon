@@ -2,6 +2,9 @@ using System;
 using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
+using Guna.UI2.WinForms;
+using Restourant_Adisyon.Business.Managers;
+using Restourant_Adisyon.UI.Theme;
 
 namespace Restourant_Adisyon.Mmodel
 {
@@ -16,28 +19,52 @@ namespace Restourant_Adisyon.Mmodel
 
         private void frmWaiterSelect_Load(object sender, EventArgs e)
         {
+            this.BackColor = AppTheme.Background;
+            this.StartPosition = FormStartPosition.CenterScreen;
+
+            if (label1 != null)
+            {
+                label1.Text = "👤 Garson Seçimi";
+                label1.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
+                label1.ForeColor = AppTheme.TextPrimary;
+            }
+
             string qry = "SELECT * FROM staff WHERE sRole = 'Garson' OR sRole = 'Waiter' ORDER BY sName";
             DataTable dt = MainClass.GetDataTable(qry);
 
             flowLayoutPanel1.Controls.Clear();
+            flowLayoutPanel1.BackColor = Color.Transparent;
 
             foreach (DataRow row in dt.Rows)
             {
-                Guna.UI2.WinForms.Guna2Button b = new Guna.UI2.WinForms.Guna2Button();
-                b.Text       = row["sName"].ToString();
-                b.Width      = 150;
-                b.Height     = 50;
-                b.FillColor  = Color.FromArgb(241, 85, 126);
-                b.HoverState.FillColor = Color.FromArgb(50, 55, 89);
-                b.Click += new EventHandler(b_click);
+                string name = row["sName"].ToString();
+                Guna2Button b = new Guna2Button
+                {
+                    Text = $"👤 {name}\nGarson",
+                    Width = 170,
+                    Height = 65,
+                    BorderRadius = 12,
+                    FillColor = AppTheme.CardBackground,
+                    ForeColor = AppTheme.TextPrimary,
+                    BorderColor = AppTheme.BorderColor,
+                    BorderThickness = 1,
+                    Font = new Font("Segoe UI", 10.5F, FontStyle.Bold),
+                    Margin = new Padding(8),
+                    Cursor = Cursors.Hand
+                };
+
+                b.HoverState.FillColor = AppTheme.BrandPrimary;
+                b.HoverState.ForeColor = Color.White;
+                b.HoverState.BorderColor = AppTheme.BrandPrimary;
+
+                b.Click += (s, ev) =>
+                {
+                    waiterName = name;
+                    this.Close();
+                };
+
                 flowLayoutPanel1.Controls.Add(b);
             }
-        }
-
-        private void b_click(object sender, EventArgs e)
-        {
-            waiterName = ((Guna.UI2.WinForms.Guna2Button)sender).Text;
-            this.Close();
         }
     }
 }
