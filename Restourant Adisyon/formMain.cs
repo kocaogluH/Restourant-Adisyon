@@ -86,10 +86,14 @@ namespace Restourant_Adisyon
             SetupTopBarControls();
             ApplyModernSidebarStyle();
 
-            // Ekran yeniden boyutlandığında üst bar çakışmasını önle
+            // Ekran yeniden boyutlandığında veya DPI değişimlerinde üst bar çakışmasını önle
             this.Resize += (s, ev) => LayoutTopBar();
+            this.SizeChanged += (s, ev) => LayoutTopBar();
+            this.Shown += (s, ev) => LayoutTopBar();
             if (guna2CustomGradientPanel1 != null)
                 guna2CustomGradientPanel1.Resize += (s, ev) => LayoutTopBar();
+            if (guna2ControlBox2 != null)
+                guna2ControlBox2.LocationChanged += (s, ev) => LayoutTopBar();
 
             // Varsayılan sayfa: Ana Sayfa
             btnHome.Checked = true;
@@ -228,29 +232,40 @@ namespace Restourant_Adisyon
         {
             if (guna2CustomGradientPanel1 == null) return;
 
-            // Pencere kontrol kutucukları (Simge, Büyüt, Kapat) sağdan 155px alan kaplar.
-            // 170px güvenlik payı bırakılarak butonların çakışması kesin olarak engellenir.
-            int rightMargin = 175;
-            int currentRight = guna2CustomGradientPanel1.Width - rightMargin;
+            // ControlBox'ların (Simge, Büyüt, Kapat) en solundaki butonun X koordinatını dinamik tespit et.
+            // DPI scaling (100%, 125%, 150%) ve çözünürlük fark etmeksizin asla çakışma yaşanmaz.
+            int minControlBoxLeft = guna2CustomGradientPanel1.Width;
+            if (guna2ControlBox2 != null && guna2ControlBox2.Visible && guna2ControlBox2.Left > 100)
+                minControlBoxLeft = Math.Min(minControlBoxLeft, guna2ControlBox2.Left);
+            if (guna2ControlBox3 != null && guna2ControlBox3.Visible && guna2ControlBox3.Left > 100)
+                minControlBoxLeft = Math.Min(minControlBoxLeft, guna2ControlBox3.Left);
+            if (btnexit != null && btnexit.Visible && btnexit.Left > 100)
+                minControlBoxLeft = Math.Min(minControlBoxLeft, btnexit.Left);
+
+            int safeRight = (minControlBoxLeft < guna2CustomGradientPanel1.Width)
+                ? minControlBoxLeft - 18
+                : guna2CustomGradientPanel1.Width - 250;
+
+            int currentRight = safeRight;
 
             if (_btnLangToggle != null)
             {
                 currentRight -= _btnLangToggle.Width;
-                _btnLangToggle.Location = new Point(currentRight, 12);
-                currentRight -= 8;
+                _btnLangToggle.Location = new Point(currentRight, 11);
+                currentRight -= 10;
             }
 
             if (_btnThemeToggle != null)
             {
                 currentRight -= _btnThemeToggle.Width;
-                _btnThemeToggle.Location = new Point(currentRight, 12);
-                currentRight -= 10;
+                _btnThemeToggle.Location = new Point(currentRight, 11);
+                currentRight -= 12;
             }
 
             if (_pnlUserChip != null)
             {
                 currentRight -= _pnlUserChip.Width;
-                _pnlUserChip.Location = new Point(currentRight, 12);
+                _pnlUserChip.Location = new Point(currentRight, 11);
             }
         }
 
