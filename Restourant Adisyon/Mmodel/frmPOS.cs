@@ -53,7 +53,7 @@ namespace Restourant_Adisyon.Mmodel
             if (btnNew != null)      AppTheme.StyleButton(btnNew, ButtonRole.Info);         // Mavi
             if (btnBill != null)     AppTheme.StyleButton(btnBill, ButtonRole.Secondary);
 
-            SetupQuickCashButtons();
+            SetupReceiptPanel();
 
             ProductPanel.Controls.Clear();
             LoadProducts();
@@ -85,9 +85,12 @@ namespace Restourant_Adisyon.Mmodel
                 txtSearch.ForeColor = AppTheme.TextPrimary;
                 txtSearch.BorderColor = AppTheme.BorderColor;
             }
+
+            if (lblTable != null)  lblTable.ForeColor  = AppTheme.BrandPrimary;
+            if (lblWaiter != null) lblWaiter.ForeColor = AppTheme.TextSecondary;
         }
 
-        private void SetupQuickCashButtons()
+        private void SetupReceiptPanel()
         {
             if (guna2Panel2 == null || _flpQuickCash != null) return;
 
@@ -95,9 +98,9 @@ namespace Restourant_Adisyon.Mmodel
             _lblSubtotal = new Label
             {
                 Text = "Ara Toplam: 0.00 ₺",
-                Font = new Font("Segoe UI", 9F),
+                Font = new Font("Segoe UI", 9.5F),
                 ForeColor = AppTheme.TextSecondary,
-                Location = new Point(14, 20),
+                Location = new Point(14, 18),
                 AutoSize = true
             };
             guna2Panel2.Controls.Add(_lblSubtotal);
@@ -105,9 +108,9 @@ namespace Restourant_Adisyon.Mmodel
             _lblTax = new Label
             {
                 Text = "KDV (%10): 0.00 ₺",
-                Font = new Font("Segoe UI", 9F),
+                Font = new Font("Segoe UI", 9.5F),
                 ForeColor = AppTheme.TextSecondary,
-                Location = new Point(14, 40),
+                Location = new Point(14, 38),
                 AutoSize = true
             };
             guna2Panel2.Controls.Add(_lblTax);
@@ -115,8 +118,8 @@ namespace Restourant_Adisyon.Mmodel
             // Hızlı Nakit Tuşları (50₺, 100₺, 200₺, 500₺, Tam Tutar)
             _flpQuickCash = new FlowLayoutPanel
             {
-                Size = new Size(guna2Panel2.Width - 28, 40),
-                Location = new Point(14, 65),
+                Size = new Size(guna2Panel2.Width - 28, 42),
+                Location = new Point(14, 62),
                 FlowDirection = FlowDirection.LeftToRight,
                 BackColor = Color.Transparent
             };
@@ -128,8 +131,8 @@ namespace Restourant_Adisyon.Mmodel
                 Guna2Button btnCash = new Guna2Button
                 {
                     Text = amt + " ₺",
-                    Size = new Size(54, 30),
-                    Margin = new Padding(0, 0, 4, 0),
+                    Size = new Size(55, 32),
+                    Margin = new Padding(0, 0, 5, 0),
                     AutoRoundedCorners = true,
                     FillColor = AppTheme.Secondary,
                     ForeColor = AppTheme.TextPrimary,
@@ -152,7 +155,7 @@ namespace Restourant_Adisyon.Mmodel
             Guna2Button btnExact = new Guna2Button
             {
                 Text = "Tam",
-                Size = new Size(50, 30),
+                Size = new Size(52, 32),
                 AutoRoundedCorners = true,
                 FillColor = AppTheme.Success,
                 ForeColor = Color.White,
@@ -180,23 +183,24 @@ namespace Restourant_Adisyon.Mmodel
             AddCategory();
         }
 
-        // ── Kategori Butonları ───────────────────────────────────────────────────
+        // ── Kategori Hap Butonları ───────────────────────────────────────────────
         private void AddCategory()
         {
             CategoryPanel.Controls.Clear();
 
-            // "Tümü" / "All" butonu
             string allText = LocalizationService.Instance.GetString("All_Categories");
             Guna2Button b2 = new Guna2Button
             {
                 FillColor = AppTheme.Secondary,
-                Size = new Size(130, 42),
+                Size = new Size(130, 40),
                 ButtonMode = Guna.UI2.WinForms.Enums.ButtonMode.RadioButton,
                 Text = allText,
                 AutoRoundedCorners = true,
                 Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
                 ForeColor = AppTheme.TextPrimary,
-                Checked = true
+                Checked = true,
+                Margin = new Padding(0, 0, 8, 0),
+                Cursor = Cursors.Hand
             };
             b2.CheckedState.FillColor = AppTheme.BrandPrimary;
             b2.CheckedState.ForeColor = Color.White;
@@ -209,12 +213,14 @@ namespace Restourant_Adisyon.Mmodel
                 Guna2Button b = new Guna2Button
                 {
                     FillColor = AppTheme.Secondary,
-                    Size = new Size(140, 42),
+                    Size = new Size(140, 40),
                     ButtonMode = Guna.UI2.WinForms.Enums.ButtonMode.RadioButton,
                     Text = cat.Name,
                     AutoRoundedCorners = true,
                     Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
-                    ForeColor = AppTheme.TextPrimary
+                    ForeColor = AppTheme.TextPrimary,
+                    Margin = new Padding(0, 0, 8, 0),
+                    Cursor = Cursors.Hand
                 };
                 b.CheckedState.FillColor = AppTheme.BrandPrimary;
                 b.CheckedState.ForeColor = Color.White;
@@ -240,7 +246,7 @@ namespace Restourant_Adisyon.Mmodel
             }
         }
 
-        // ── Ürün Yükleme ────────────────────────────────────────────────────────
+        // ── Ürün Yükleme (Konsept 1 İştah Açıcı Yemek Kartları) ───────────────────
         private void LoadProducts()
         {
             var products = PosManager.Instance.GetProducts();
@@ -270,7 +276,7 @@ namespace Restourant_Adisyon.Mmodel
             };
         }
 
-        // ── Sepete Ekleme (Barkod veya tıklama) ─────────────────────────────────
+        // ── Sepete Ekleme ────────────────────────────────────────────────────────
         private void AddToCart(int proID, string proName, string proPrice)
         {
             foreach (DataGridViewRow item in guna2DataGridView1.Rows)
@@ -365,7 +371,7 @@ namespace Restourant_Adisyon.Mmodel
             if (_lblTax != null)      _lblTax.Text      = $"KDV (%10): {tax:N2} ₺";
         }
 
-        // ── Sepetten Ürün Kaldır (Delete) & Miktar Değiştirme ─────────────────────
+        // ── Dokunmatik Adet Arttır/Azalt & Sil ──────────────────────────────────
         private void guna2DataGridView1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete && guna2DataGridView1.CurrentRow != null)
@@ -394,7 +400,6 @@ namespace Restourant_Adisyon.Mmodel
             }
         }
 
-        // ── Sipariş Tipi Butonları ───────────────────────────────────────────────
         private void btnNew_Click(object sender, EventArgs e)
         {
             lblTable.Text = "";  lblWaiter.Text = "";
@@ -433,7 +438,6 @@ namespace Restourant_Adisyon.Mmodel
             lblWaiter.Visible = !string.IsNullOrEmpty(frm2.waiterName);
         }
 
-        // ── Sipariş Kaydet (KOT) ────────────────────────────────────────────────
         private void btnKot_Click(object sender, EventArgs e)
         {
             if (string.IsNullOrEmpty(OrderType))
@@ -463,7 +467,6 @@ namespace Restourant_Adisyon.Mmodel
                         {
                             if (MainID == 0)
                             {
-                                // Yeni kayıt
                                 string qry1 = @"INSERT INTO tblMain (aDate,aTime,TableName,WaiterName,status,orderType,total,received,change)
                                                 VALUES (@aDate,@aTime,@TableName,@WaiterName,@status,@orderType,@total,0,0);
                                                 SELECT last_insert_rowid();";
@@ -481,7 +484,6 @@ namespace Restourant_Adisyon.Mmodel
                             }
                             else
                             {
-                                // Güncelle
                                 string qry1 = @"UPDATE tblMain SET status='Pending', total=@total WHERE MainID=@ID";
                                 using (var cmd = new System.Data.SQLite.SQLiteCommand(qry1, con, tr))
                                 {
@@ -491,7 +493,6 @@ namespace Restourant_Adisyon.Mmodel
                                 }
                             }
 
-                            // Detaylar
                             foreach (DataGridViewRow row in guna2DataGridView1.Rows)
                             {
                                 int detailID = Convert.ToInt32(row.Cells["dgvid"].Value);
@@ -512,7 +513,6 @@ namespace Restourant_Adisyon.Mmodel
                                     cmd2.ExecuteNonQuery();
                                 }
 
-                                // Stok düş
                                 using (var cmdStock = new System.Data.SQLite.SQLiteCommand(
                                     @"UPDATE tblMaterials SET mQty = mQty - (r.qtyNeeded * @qty)
                                       FROM tblMaterials m
@@ -546,7 +546,6 @@ namespace Restourant_Adisyon.Mmodel
             }
         }
 
-        // ── Fatura Listesi ───────────────────────────────────────────────────────
         private void btnBill_Click(object sender, EventArgs e)
         {
             frmBillList frm = new frmBillList();
@@ -559,10 +558,8 @@ namespace Restourant_Adisyon.Mmodel
             }
         }
 
-        // ── Ödeme Al (Checkout) ──────────────────────────────────────────────────
         private void btnCheckout_Click(object sender, EventArgs e)
         {
-            // Eğer sipariş henüz kaydedilmemişse otomatik kaydet ve ödemeye geç
             if (MainID == 0)
             {
                 if (guna2DataGridView1.Rows.Count == 0)
@@ -584,7 +581,6 @@ namespace Restourant_Adisyon.Mmodel
                 btnNew_Click(null, null);
         }
 
-        // ── Mevcut Siparişi Yükle ────────────────────────────────────────────────
         private void LoadEntries()
         {
             string qry = @"SELECT m.TableName, m.WaiterName, d.DetailID, d.proID, p.pName, d.qty, d.price, d.amount

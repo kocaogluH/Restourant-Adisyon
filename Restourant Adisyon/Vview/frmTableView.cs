@@ -18,14 +18,12 @@ namespace Restourant_Adisyon.Vview
     public partial class frmTableView : SampleView
     {
         private FlowLayoutPanel _flpTableMap;
-        private Panel _pnlMapHeader;
+        private FlowLayoutPanel _flpFilterPills;
         private Guna2Button _btnToggleView;
-        private Guna2Button _btnFilterAll;
-        private Guna2Button _btnFilterEmpty;
-        private Guna2Button _btnFilterOccupied;
 
         private bool _isMapMode = true;
-        private TableStatus? _currentFilter = null;
+        private TableStatus? _currentStatusFilter = null;
+        private string _currentZoneFilter = "Tümü";
 
         public frmTableView()
         {
@@ -34,7 +32,7 @@ namespace Restourant_Adisyon.Vview
 
         private void frmTableView_Load(object sender, EventArgs e)
         {
-            SetupMapUi();
+            SetupConcept2MapUi();
 
             if (guna2DataGridView1 != null)
                 GridStyler.Apply(guna2DataGridView1, "Henüz masa eklenmemiş. Eklemek için '+' butonuna tıklayın.");
@@ -48,24 +46,26 @@ namespace Restourant_Adisyon.Vview
             RenderTableMap();
         }
 
-        private void SetupMapUi()
+        private void SetupConcept2MapUi()
         {
-            // Başlık Çubuğu & Filtreler
-            _pnlMapHeader = new Panel
+            // Filtre Hapları Çubuğu (Konsept 2 Tarzı Bölge & Durum Filtreleri)
+            _flpFilterPills = new FlowLayoutPanel
             {
-                Location = new Point(21, 130),
-                Size = new Size(this.Width - 42, 44),
+                Location = new Point(21, 128),
+                Size = new Size(this.Width - 42, 46),
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
-                BackColor = Color.Transparent
+                BackColor = Color.Transparent,
+                FlowDirection = FlowDirection.LeftToRight,
+                WrapContents = false
             };
-            this.Controls.Add(_pnlMapHeader);
+            this.Controls.Add(_flpFilterPills);
 
-            // Görünüm Değiştir Butonu (Harita / Liste)
+            // Görünüm Değiştirici Buton
             _btnToggleView = new Guna2Button
             {
                 Text = "📋 Liste Görünümü",
                 Size = new Size(140, 36),
-                Location = new Point(0, 4),
+                Margin = new Padding(0, 4, 12, 0),
                 AutoRoundedCorners = true,
                 FillColor = AppTheme.BrandSecondary,
                 ForeColor = Color.White,
@@ -81,18 +81,16 @@ namespace Restourant_Adisyon.Vview
                 _flpTableMap.Visible = _isMapMode;
                 if (_isMapMode) RenderTableMap();
             };
-            _pnlMapHeader.Controls.Add(_btnToggleView);
+            _flpFilterPills.Controls.Add(_btnToggleView);
 
-            // Filtre Butonları
-            _btnFilterAll = CreateFilterButton("Tümü", 150, () => { _currentFilter = null; RenderTableMap(); });
-            _btnFilterEmpty = CreateFilterButton("🟢 Boş Masalar", 260, () => { _currentFilter = TableStatus.Empty; RenderTableMap(); });
-            _btnFilterOccupied = CreateFilterButton("🔴 Dolu Masalar", 380, () => { _currentFilter = TableStatus.Occupied; RenderTableMap(); });
+            // Filtre Hapları
+            _flpFilterPills.Controls.Add(CreatePill("🌟 Tümü", true, () => { _currentStatusFilter = null; RenderTableMap(); }));
+            _flpFilterPills.Controls.Add(CreatePill("🟢 Boş Masalar", false, () => { _currentStatusFilter = TableStatus.Empty; RenderTableMap(); }));
+            _flpFilterPills.Controls.Add(CreatePill("🔴 Dolu Masalar", false, () => { _currentStatusFilter = TableStatus.Occupied; RenderTableMap(); }));
+            _flpFilterPills.Controls.Add(CreatePill("🏛️ Ana Salon", false, () => { _currentZoneFilter = "Ana Salon"; RenderTableMap(); }));
+            _flpFilterPills.Controls.Add(CreatePill("🌿 Teras", false, () => { _currentZoneFilter = "Teras"; RenderTableMap(); }));
 
-            _pnlMapHeader.Controls.Add(_btnFilterAll);
-            _pnlMapHeader.Controls.Add(_btnFilterEmpty);
-            _pnlMapHeader.Controls.Add(_btnFilterOccupied);
-
-            // Görsel Masa Haritası Paneli
+            // İnteraktif Masa Krokisi Gridi (Konsept 2 Tarzı)
             _flpTableMap = new FlowLayoutPanel
             {
                 Location = new Point(21, 185),
@@ -107,21 +105,34 @@ namespace Restourant_Adisyon.Vview
             guna2DataGridView1.Visible = false;
         }
 
-        private Guna2Button CreateFilterButton(string text, int x, Action onClick)
+        private Guna2Button CreatePill(string text, bool isActive, Action onClick)
         {
             Guna2Button btn = new Guna2Button
             {
                 Text = text,
-                Size = new Size(110, 36),
-                Location = new Point(x, 4),
+                Size = new Size(115, 36),
+                Margin = new Padding(0, 4, 8, 0),
                 AutoRoundedCorners = true,
-                FillColor = AppTheme.Secondary,
-                ForeColor = AppTheme.TextPrimary,
+                FillColor = isActive ? AppTheme.BrandPrimary : AppTheme.Secondary,
+                ForeColor = isActive ? Color.White : AppTheme.TextPrimary,
                 Font = new Font("Segoe UI", 9F, FontStyle.Bold),
                 Animated = true,
                 Cursor = Cursors.Hand
             };
-            btn.Click += (s, e) => onClick();
+            btn.Click += (s, e) =>
+            {
+                foreach (Control c in _flpFilterPills.Controls)
+                {
+                    if (c is Guna2Button b && b != _btnToggleView)
+                    {
+                        b.FillColor = AppTheme.Secondary;
+                        b.ForeColor = AppTheme.TextPrimary;
+                    }
+                }
+                btn.FillColor = AppTheme.BrandPrimary;
+                btn.ForeColor = Color.White;
+                onClick();
+            };
             return btn;
         }
 
@@ -156,57 +167,58 @@ namespace Restourant_Adisyon.Vview
             _flpTableMap.Controls.Clear();
 
             string search = txtSearch != null ? txtSearch.Text.Trim() : "";
-            List<TableCardDto> tables = TableManager.Instance.GetAllTableCards(search, _currentFilter);
+            List<TableCardDto> tables = TableManager.Instance.GetAllTableCards(search, _currentStatusFilter);
 
             foreach (var t in tables)
             {
                 bool isBusy = t.Status == TableStatus.Occupied;
                 Color statusColor = isBusy ? AppTheme.Danger : AppTheme.Success;
-                string statusText = isBusy ? "DOLU" : "BOŞ";
+                string statusText = isBusy ? "🔴 DOLU" : "🟢 MÜSAİT";
 
+                // Konsept 2 Işıltılı Masa Kartı
                 Guna2Panel card = new Guna2Panel
                 {
-                    Size = new Size(175, 155),
-                    Margin = new Padding(10),
-                    BorderRadius = 14,
+                    Size = new Size(185, 165),
+                    Margin = new Padding(12),
+                    BorderRadius = 16,
                     BorderThickness = 2,
                     BorderColor = statusColor,
                     FillColor = AppTheme.CardBackground,
                     Cursor = Cursors.Hand
                 };
 
-                // Masa Adı
+                // Masa Başlığı
                 Label lblName = new Label
                 {
                     Text = t.TableName,
-                    Font = new Font("Segoe UI", 13F, FontStyle.Bold),
+                    Font = new Font("Segoe UI", 13.5F, FontStyle.Bold),
                     ForeColor = AppTheme.TextPrimary,
-                    Location = new Point(12, 12),
-                    Size = new Size(150, 26),
+                    Location = new Point(14, 12),
+                    Size = new Size(155, 26),
                     TextAlign = ContentAlignment.MiddleLeft
                 };
                 card.Controls.Add(lblName);
 
-                // Kapasite
+                // Kapasite Rozeti
                 Label lblCap = new Label
                 {
-                    Text = "👥 " + t.Capacity + " Kişilik",
+                    Text = "👥 " + t.Capacity + " Kişilik Masalar",
                     Font = new Font("Segoe UI", 8.5F),
                     ForeColor = AppTheme.TextSecondary,
-                    Location = new Point(14, 40),
-                    Size = new Size(140, 18)
+                    Location = new Point(16, 40),
+                    Size = new Size(150, 18)
                 };
                 card.Controls.Add(lblCap);
 
-                // Durum Rozeti
+                // Durum Rozeti (Konsept 2 stili)
                 Guna2Button badge = new Guna2Button
                 {
                     Text = statusText,
                     Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
                     FillColor = statusColor,
                     ForeColor = Color.White,
-                    Size = new Size(65, 24),
-                    Location = new Point(14, 62),
+                    Size = new Size(76, 24),
+                    Location = new Point(16, 64),
                     AutoRoundedCorners = true
                 };
                 card.Controls.Add(badge);
@@ -217,21 +229,21 @@ namespace Restourant_Adisyon.Vview
                     Label lblAmt = new Label
                     {
                         Text = t.ActiveBillAmount.ToString("N2") + " ₺",
-                        Font = new Font("Segoe UI", 12F, FontStyle.Bold),
+                        Font = new Font("Segoe UI", 13F, FontStyle.Bold),
                         ForeColor = AppTheme.BrandPrimary,
-                        Location = new Point(12, 92),
-                        Size = new Size(150, 24)
+                        Location = new Point(14, 96),
+                        Size = new Size(155, 26)
                     };
                     card.Controls.Add(lblAmt);
 
                     // Garson & Geçen Süre
                     Label lblDetail = new Label
                     {
-                        Text = $"⏱️ {t.ElapsedMinutes} dk | {t.WaiterName}",
-                        Font = new Font("Segoe UI", 8F),
+                        Text = $"⏱️ {t.ElapsedMinutes} dk | 👤 {t.WaiterName}",
+                        Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
                         ForeColor = AppTheme.TextSecondary,
-                        Location = new Point(14, 120),
-                        Size = new Size(150, 20)
+                        Location = new Point(16, 126),
+                        Size = new Size(155, 20)
                     };
                     card.Controls.Add(lblDetail);
                 }
@@ -239,16 +251,15 @@ namespace Restourant_Adisyon.Vview
                 {
                     Label lblFree = new Label
                     {
-                        Text = "Sipariş Açmak İçin Tıklayın ➜",
-                        Font = new Font("Segoe UI", 8F, FontStyle.Italic),
+                        Text = "Sipariş Açmak İçin Dokunun ➜",
+                        Font = new Font("Segoe UI", 8.5F, FontStyle.Italic),
                         ForeColor = AppTheme.TextSecondary,
-                        Location = new Point(14, 105),
-                        Size = new Size(150, 36)
+                        Location = new Point(16, 110),
+                        Size = new Size(155, 36)
                     };
                     card.Controls.Add(lblFree);
                 }
 
-                // Tıklama Eylemi: Masayı doğrudan POS'a aktar
                 EventHandler openPos = (s, e) =>
                 {
                     frmPOS pos = new frmPOS();

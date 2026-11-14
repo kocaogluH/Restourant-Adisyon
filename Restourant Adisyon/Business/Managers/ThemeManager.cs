@@ -12,7 +12,7 @@ namespace Restourant_Adisyon.Business.Managers
         private static ThemeManager _instance;
         public static ThemeManager Instance => _instance ?? (_instance = new ThemeManager());
 
-        public ThemeMode CurrentTheme { get; private set; } = ThemeMode.CyberSlateDark;
+        public ThemeMode CurrentTheme { get; private set; } = ThemeMode.CleanWhiteLight;
 
         public event EventHandler<ThemeMode> OnThemeChanged;
 
