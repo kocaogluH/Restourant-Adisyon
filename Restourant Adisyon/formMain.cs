@@ -168,7 +168,9 @@ namespace Restourant_Adisyon
                     BorderRadius = 18,
                     BorderThickness = 1,
                     BorderColor = ThemeManager.Instance.BorderColor,
-                    FillColor = ThemeManager.Instance.SurfaceCard
+                    FillColor = ThemeManager.Instance.SurfaceCard,
+                    BackColor = Color.Transparent,
+                    UseTransparentBackground = true
                 };
 
                 Label lblUserInfo = new Label
@@ -193,6 +195,8 @@ namespace Restourant_Adisyon
                     AutoRoundedCorners = true,
                     FillColor = ThemeManager.Instance.SurfaceElevated,
                     ForeColor = ThemeManager.Instance.TextPrimary,
+                    BackColor = Color.Transparent,
+                    UseTransparentBackground = true,
                     Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
                     Animated = true,
                     Cursor = Cursors.Hand
@@ -211,6 +215,8 @@ namespace Restourant_Adisyon
                     AutoRoundedCorners = true,
                     FillColor = ThemeManager.Instance.BrandPrimary,
                     ForeColor = Color.White,
+                    BackColor = Color.Transparent,
+                    UseTransparentBackground = true,
                     Font = new Font("Segoe UI", 9F, FontStyle.Bold),
                     Animated = true,
                     Cursor = Cursors.Hand
@@ -315,6 +321,7 @@ namespace Restourant_Adisyon
         {
             // Panel & Arka Plan
             guna2Panel1.FillColor = ThemeManager.Instance.SidebarBackground;
+            guna2Panel1.BackColor = ThemeManager.Instance.SidebarBackground;
             guna2Panel1.Width = 224;
 
             if (ControlsPanel != null)
@@ -323,6 +330,7 @@ namespace Restourant_Adisyon
             if (guna2CustomGradientPanel1 != null)
             {
                 Color headerCol = ThemeManager.Instance.HeaderBackground;
+                guna2CustomGradientPanel1.BackColor  = headerCol;
                 guna2CustomGradientPanel1.FillColor  = headerCol;
                 guna2CustomGradientPanel1.FillColor2 = headerCol;
                 guna2CustomGradientPanel1.FillColor3 = headerCol;

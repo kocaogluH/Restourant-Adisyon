@@ -55,6 +55,7 @@ namespace Restourant_Adisyon
             if (guna2Panel1 != null)
             {
                 guna2Panel1.FillColor = AppTheme.SidebarBackground;
+                guna2Panel1.BackColor = AppTheme.SidebarBackground;
                 guna2Panel1.Height = 75;
 
                 // Eski pikselli ikon gizlenip minimalist başlık oluşturulur

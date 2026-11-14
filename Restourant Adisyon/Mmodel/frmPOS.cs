@@ -84,6 +84,7 @@ namespace Restourant_Adisyon.Mmodel
             if (guna2Panel1 == null) return;
 
             guna2Panel1.FillColor = AppTheme.SidebarBackground;
+            guna2Panel1.BackColor = AppTheme.SidebarBackground;
             guna2Panel1.Height = 82;
 
             // Eski pikselli resmi ve labelleri gizle
@@ -97,9 +98,9 @@ namespace Restourant_Adisyon.Mmodel
                 _lblBrand = new Label
                 {
                     Text = "⚡ RESTO POS",
-                    Font = new Font("Segoe UI", 13.5F, FontStyle.Bold),
+                    Font = new Font("Segoe UI", 12.5F, FontStyle.Bold),
                     ForeColor = Color.White,
-                    Location = new Point(18, 16),
+                    Location = new Point(16, 16),
                     AutoSize = true,
                     BackColor = Color.Transparent
                 };
@@ -107,10 +108,10 @@ namespace Restourant_Adisyon.Mmodel
 
                 _lblBrandSub = new Label
                 {
-                    Text = "Hızlı Adisyon & Satış Terminali",
+                    Text = "POS & Satış Terminali",
                     Font = new Font("Segoe UI", 8F),
                     ForeColor = Color.FromArgb(148, 163, 184),
-                    Location = new Point(20, 44),
+                    Location = new Point(18, 44),
                     AutoSize = true,
                     BackColor = Color.Transparent
                 };
@@ -127,6 +128,8 @@ namespace Restourant_Adisyon.Mmodel
                     BorderRadius = 18,
                     FillColor = Color.FromArgb(30, 41, 59),
                     ForeColor = Color.FromArgb(226, 232, 240),
+                    BackColor = Color.Transparent,
+                    UseTransparentBackground = true,
                     Font = new Font("Segoe UI", 9F, FontStyle.Bold),
                     Cursor = Cursors.Hand
                 };
@@ -140,6 +143,8 @@ namespace Restourant_Adisyon.Mmodel
                     BorderRadius = 18,
                     FillColor = Color.FromArgb(30, 41, 59),
                     ForeColor = Color.FromArgb(226, 232, 240),
+                    BackColor = Color.Transparent,
+                    UseTransparentBackground = true,
                     Font = new Font("Segoe UI", 9F, FontStyle.Bold),
                     Cursor = Cursors.Hand
                 };
@@ -216,8 +221,11 @@ namespace Restourant_Adisyon.Mmodel
                 btnNew.Location = new Point(rightEdge, 22);
             }
 
-            // 2. Soldaki Rozetler ve Servis Seçenekleri (Markadan hemen sonra başlar)
-            int leftEdge = 160;
+            // 2. Soldaki Rozetler ve Servis Seçenekleri (Markadan ve alt yazıdan sonra dinamik başlar)
+            int brandRight = 155;
+            if (_lblBrand != null) brandRight = Math.Max(brandRight, _lblBrand.Right);
+            if (_lblBrandSub != null) brandRight = Math.Max(brandRight, _lblBrandSub.Right);
+            int leftEdge = brandRight + 18;
 
             if (_badgeTable != null)
             {
@@ -326,10 +334,15 @@ namespace Restourant_Adisyon.Mmodel
         private void ApplyThemeAndStyling()
         {
             this.BackColor = AppTheme.Background;
-            if (guna2Panel1 != null) guna2Panel1.FillColor = AppTheme.SidebarBackground;
+            if (guna2Panel1 != null)
+            {
+                guna2Panel1.FillColor = AppTheme.SidebarBackground;
+                guna2Panel1.BackColor = AppTheme.SidebarBackground;
+            }
             if (guna2Panel2 != null)
             {
                 guna2Panel2.FillColor = AppTheme.CardBackground;
+                guna2Panel2.BackColor = AppTheme.CardBackground;
                 guna2Panel2.BorderColor = AppTheme.BorderColor;
                 guna2Panel2.BorderThickness = 1;
             }
@@ -399,6 +412,8 @@ namespace Restourant_Adisyon.Mmodel
                     AutoRoundedCorners = true,
                     FillColor = AppTheme.Secondary,
                     ForeColor = AppTheme.TextPrimary,
+                    BackColor = Color.Transparent,
+                    UseTransparentBackground = true,
                     Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
                     Cursor = Cursors.Hand
                 };
@@ -422,6 +437,8 @@ namespace Restourant_Adisyon.Mmodel
                 AutoRoundedCorners = true,
                 FillColor = AppTheme.Success,
                 ForeColor = Color.White,
+                BackColor = Color.Transparent,
+                UseTransparentBackground = true,
                 Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
                 Cursor = Cursors.Hand
             };
@@ -454,6 +471,8 @@ namespace Restourant_Adisyon.Mmodel
                 AutoRoundedCorners = true,
                 Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
                 ForeColor = AppTheme.TextPrimary,
+                BackColor = Color.Transparent,
+                UseTransparentBackground = true,
                 Checked = true,
                 Margin = new Padding(0, 0, 8, 0),
                 Cursor = Cursors.Hand
@@ -475,6 +494,8 @@ namespace Restourant_Adisyon.Mmodel
                     AutoRoundedCorners = true,
                     Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
                     ForeColor = AppTheme.TextPrimary,
+                    BackColor = Color.Transparent,
+                    UseTransparentBackground = true,
                     Margin = new Padding(0, 0, 8, 0),
                     Cursor = Cursors.Hand
                 };

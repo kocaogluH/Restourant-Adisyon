@@ -39,6 +39,7 @@
             // 
             // guna2Panel1
             // 
+            this.guna2Panel1.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(15)))), ((int)(((byte)(23)))), ((int)(((byte)(42)))));
             this.guna2Panel1.Controls.Add(this.btnExit);
             this.guna2Panel1.Controls.Add(this.pictureBox1);
             this.guna2Panel1.Controls.Add(this.label1);

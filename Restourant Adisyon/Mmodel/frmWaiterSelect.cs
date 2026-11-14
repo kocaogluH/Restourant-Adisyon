@@ -35,6 +35,7 @@ namespace Restourant_Adisyon.Mmodel
             if (guna2Panel1 != null)
             {
                 guna2Panel1.FillColor = Color.FromArgb(15, 23, 42); // Obsidian Slate
+                guna2Panel1.BackColor = Color.FromArgb(15, 23, 42);
                 guna2Panel1.Height = 70;
             }
 
@@ -104,6 +105,8 @@ namespace Restourant_Adisyon.Mmodel
                     BorderRadius = 12,
                     FillColor = AppTheme.CardBackground,
                     ForeColor = AppTheme.TextPrimary,
+                    BackColor = Color.Transparent,
+                    UseTransparentBackground = true,
                     BorderColor = AppTheme.BorderColor,
                     BorderThickness = 1,
                     Font = new Font("Segoe UI", 10.5F, FontStyle.Bold),

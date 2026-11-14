@@ -57,6 +57,7 @@ namespace Restourant_Adisyon.Mmodel
             if (guna2Panel1 != null)
             {
                 guna2Panel1.FillColor = AppTheme.SidebarBackground;
+                guna2Panel1.BackColor = AppTheme.SidebarBackground;
                 guna2Panel1.Height = 70;
 
                 if (label1 != null)
