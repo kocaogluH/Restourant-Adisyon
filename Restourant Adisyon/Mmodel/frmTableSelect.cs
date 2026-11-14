@@ -37,21 +37,23 @@ namespace Restourant_Adisyon.Mmodel
             if (guna2Panel1 != null)
             {
                 guna2Panel1.FillColor = Color.FromArgb(15, 23, 42); // Obsidian Slate
-                guna2Panel1.Height = 76;
+                guna2Panel1.Height = 70;
             }
 
             if (label1 != null)
             {
                 label1.Text = "🪑 Masa Seçimi";
-                label1.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
+                label1.Font = new Font("Segoe UI", 15F, FontStyle.Bold);
                 label1.ForeColor = Color.White;
-                label1.Location = new Point(24, 22);
+                label1.Location = new Point(22, 20);
             }
 
-            if (btnExit != null)
+            if (btnExit != null && guna2Panel1 != null)
             {
-                btnExit.Location = new Point(guna2Panel1.Width - 52, 20);
+                btnExit.Location = new Point(guna2Panel1.Width - 46, (guna2Panel1.Height - 32) / 2);
                 btnExit.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+                btnExit.BackColor = Color.Transparent;
+                btnExit.UseTransparentBackground = true;
             }
 
             flowLayoutPanel1.Controls.Clear();
