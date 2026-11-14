@@ -1,9 +1,12 @@
 using System;
-using System.Collections;
-using System.Data;
-using System.Data.SQLite;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
+using Guna.UI2.WinForms;
+using Restourant_Adisyon.Business.Managers;
+using Restourant_Adisyon.Core.DTOs;
+using Restourant_Adisyon.Core.Enums;
+using Restourant_Adisyon.UI.Theme;
 
 namespace Restourant_Adisyon.Mmodel
 {
@@ -18,41 +21,47 @@ namespace Restourant_Adisyon.Mmodel
 
         private void frmTableSelect_Load(object sender, EventArgs e)
         {
-            string qry = "SELECT * FROM tables ORDER BY tName";
-            DataTable dt = MainClass.GetDataTable(qry);
+            this.BackColor = AppTheme.Background;
+            if (label1 != null) label1.ForeColor = AppTheme.BrandPrimary;
 
             flowLayoutPanel1.Controls.Clear();
+            flowLayoutPanel1.BackColor = Color.Transparent;
 
-            foreach (DataRow row in dt.Rows)
+            List<TableCardDto> tables = TableManager.Instance.GetAllTableCards();
+
+            foreach (var t in tables)
             {
-                string tname = row["tName"].ToString();
-                Guna.UI2.WinForms.Guna2Button b = new Guna.UI2.WinForms.Guna2Button();
-                b.Text        = tname;
-                b.Width       = 150;
-                b.Height      = 150;
-                b.BorderRadius = 10;
-                b.FillColor   = IsTableBusy(tname)
-                    ? Color.FromArgb(231, 76, 60)    // Kırmızı – dolu
-                    : Color.FromArgb(46, 204, 113);   // Yeşil – boş
-                b.HoverState.FillColor = Color.FromArgb(50, 55, 89);
-                b.Click += new EventHandler(b_click);
+                bool isBusy = t.Status == TableStatus.Occupied;
+                Color cardColor = isBusy ? AppTheme.Danger : AppTheme.Success;
+                string statusText = isBusy ? $"🔴 DOLU ({t.ActiveBillAmount:N0} ₺)" : "🟢 BOŞ";
+
+                Guna2Button b = new Guna2Button
+                {
+                    Text = $"{t.TableName}\n\n👥 {t.Capacity} Kişi\n{statusText}",
+                    Width = 150,
+                    Height = 130,
+                    BorderRadius = 14,
+                    FillColor = AppTheme.CardBackground,
+                    ForeColor = AppTheme.TextPrimary,
+                    Font = new Font("Segoe UI", 10.5F, FontStyle.Bold),
+                    BorderColor = cardColor,
+                    BorderThickness = 2,
+                    Animated = true,
+                    Cursor = Cursors.Hand,
+                    Margin = new Padding(10)
+                };
+
+                b.HoverState.FillColor = cardColor;
+                b.HoverState.ForeColor = Color.White;
+
+                b.Click += (s, ev) =>
+                {
+                    TableName = t.TableName;
+                    this.Close();
+                };
+
                 flowLayoutPanel1.Controls.Add(b);
             }
-        }
-
-        private bool IsTableBusy(string tableName)
-        {
-            string qry = "SELECT COUNT(*) FROM tblMain WHERE TableName=@t AND status='Pending'";
-            Hashtable ht = new Hashtable();
-            ht.Add("@t", tableName);
-            object res = MainClass.SqlScalar(qry, ht);
-            return res != null && Convert.ToInt64(res) > 0;
-        }
-
-        private void b_click(object sender, EventArgs e)
-        {
-            TableName = ((Guna.UI2.WinForms.Guna2Button)sender).Text;
-            this.Close();
         }
     }
 }

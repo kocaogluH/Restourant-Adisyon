@@ -1,7 +1,9 @@
 using Guna.UI2.WinForms;
 using System.Drawing;
 using System.Windows.Forms;
+using Restourant_Adisyon.Business.Managers;
 using Restourant_Adisyon.Business.Services;
+using Restourant_Adisyon.UI.Theme;
 
 namespace Restourant_Adisyon.UI.Controls
 {
@@ -17,21 +19,26 @@ namespace Restourant_Adisyon.UI.Controls
             grid.AllowUserToAddRows = false;
             grid.RowHeadersVisible = false;
             grid.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            grid.BackgroundColor = AppTheme.CardBackground;
+            grid.GridColor = AppTheme.BorderColor;
 
             // Header Style
-            grid.ColumnHeadersDefaultCellStyle.BackColor = Color.FromArgb(50, 55, 89);
-            grid.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
+            grid.ColumnHeadersDefaultCellStyle.BackColor = ThemeManager.Instance.SurfaceElevated;
+            grid.ColumnHeadersDefaultCellStyle.ForeColor = AppTheme.TextPrimary;
             grid.ColumnHeadersDefaultCellStyle.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-            grid.ColumnHeadersHeight = 38;
+            grid.ColumnHeadersHeight = 40;
 
-            // Zebra Striping Rows
-            grid.DefaultCellStyle.BackColor = Color.White;
-            grid.DefaultCellStyle.ForeColor = Color.FromArgb(40, 40, 40);
-            grid.DefaultCellStyle.SelectionBackColor = Color.FromArgb(241, 85, 126);
+            // Rows
+            grid.DefaultCellStyle.BackColor = AppTheme.CardBackground;
+            grid.DefaultCellStyle.ForeColor = AppTheme.TextPrimary;
+            grid.DefaultCellStyle.SelectionBackColor = AppTheme.BrandPrimary;
             grid.DefaultCellStyle.SelectionForeColor = Color.White;
             grid.DefaultCellStyle.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
 
-            grid.AlternatingRowsDefaultCellStyle.BackColor = Color.FromArgb(245, 247, 250);
+            grid.AlternatingRowsDefaultCellStyle.BackColor = ThemeManager.Instance.CurrentTheme == Core.Enums.ThemeMode.CleanWhiteLight 
+                ? Color.FromArgb(248, 250, 252) 
+                : Color.FromArgb(25, 33, 50);
+            grid.AlternatingRowsDefaultCellStyle.ForeColor = AppTheme.TextPrimary;
 
             // Empty-State Handling
             string msg = !string.IsNullOrEmpty(emptyMessageKey)
@@ -47,7 +54,7 @@ namespace Restourant_Adisyon.UI.Controls
             if (grid.Rows.Count == 0)
             {
                 using (Font font = new Font("Segoe UI", 11F, FontStyle.Regular))
-                using (Brush brush = new SolidBrush(Color.FromArgb(140, 150, 175)))
+                using (Brush brush = new SolidBrush(AppTheme.TextSecondary))
                 {
                     string text = string.IsNullOrEmpty(emptyMessage)
                         ? "Henüz kayıt bulunmuyor."

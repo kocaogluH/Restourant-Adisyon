@@ -5,7 +5,13 @@ using System.Data.SQLite;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
+using Guna.UI2.WinForms;
+using Restourant_Adisyon.Business.Managers;
 using Restourant_Adisyon.Business.Services;
+using Restourant_Adisyon.Core.DTOs;
+using Restourant_Adisyon.Core.Entities;
+using Restourant_Adisyon.UI.Controls;
+using Restourant_Adisyon.UI.Theme;
 
 namespace Restourant_Adisyon.Mmodel
 {
@@ -17,11 +23,15 @@ namespace Restourant_Adisyon.Mmodel
         }
 
         public int    MainID = 0;
-        public string OrderType;
+        public string OrderType = "Masada";
 
         // Barkod tamponu (klavye ile hızlı giriş algılar)
         private string _barcodeBuffer = "";
         private DateTime _lastKeyTime = DateTime.Now;
+
+        private FlowLayoutPanel _flpQuickCash;
+        private Label _lblSubtotal;
+        private Label _lblTax;
 
         private void btnExit_Click(object sender, EventArgs e)
         {
@@ -30,23 +40,130 @@ namespace Restourant_Adisyon.Mmodel
 
         private void frmPOS_Load(object sender, EventArgs e)
         {
-            if (guna2DataGridView1 != null)
-                Restourant_Adisyon.UI.Controls.GridStyler.Apply(guna2DataGridView1, "Cart_Empty");
+            ApplyThemeAndStyling();
 
             LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
+            ThemeManager.Instance.OnThemeChanged += (s, theme) => ApplyThemeAndStyling();
+
             ApplyLocalization();
 
             // Buton Hiyerarşisi (Button Roles)
-            if (btnCheckout != null) Restourant_Adisyon.UI.Theme.AppTheme.StyleButton(btnCheckout, Restourant_Adisyon.UI.Theme.ButtonRole.Success); // Yeşil
-            if (btnKot != null)      Restourant_Adisyon.UI.Theme.AppTheme.StyleButton(btnKot, Restourant_Adisyon.UI.Theme.ButtonRole.Primary);   // Pembe
-            if (btnNew != null)      Restourant_Adisyon.UI.Theme.AppTheme.StyleButton(btnNew, Restourant_Adisyon.UI.Theme.ButtonRole.Info);      // Mavi
-            if (btnBill != null)     Restourant_Adisyon.UI.Theme.AppTheme.StyleButton(btnBill, Restourant_Adisyon.UI.Theme.ButtonRole.Secondary);
+            if (btnCheckout != null) AppTheme.StyleButton(btnCheckout, ButtonRole.Success); // Yeşil
+            if (btnKot != null)      AppTheme.StyleButton(btnKot, ButtonRole.Primary);      // Pembe
+            if (btnNew != null)      AppTheme.StyleButton(btnNew, ButtonRole.Info);         // Mavi
+            if (btnBill != null)     AppTheme.StyleButton(btnBill, ButtonRole.Secondary);
+
+            SetupQuickCashButtons();
 
             ProductPanel.Controls.Clear();
             LoadProducts();
 
             // Barkod desteği: form-level KeyPreview etkinleştir
             this.KeyPreview = true;
+        }
+
+        private void ApplyThemeAndStyling()
+        {
+            this.BackColor = AppTheme.Background;
+            if (guna2Panel1 != null) guna2Panel1.FillColor = AppTheme.SidebarBackground;
+            if (guna2Panel2 != null)
+            {
+                guna2Panel2.FillColor = AppTheme.CardBackground;
+                guna2Panel2.BorderColor = AppTheme.BorderColor;
+                guna2Panel2.BorderThickness = 1;
+            }
+
+            if (guna2DataGridView1 != null)
+                GridStyler.Apply(guna2DataGridView1, "Cart_Empty");
+
+            if (lblTotal != null)
+                lblTotal.ForeColor = AppTheme.BrandPrimary;
+
+            if (txtSearch != null)
+            {
+                txtSearch.FillColor = AppTheme.CardBackground;
+                txtSearch.ForeColor = AppTheme.TextPrimary;
+                txtSearch.BorderColor = AppTheme.BorderColor;
+            }
+        }
+
+        private void SetupQuickCashButtons()
+        {
+            if (guna2Panel2 == null || _flpQuickCash != null) return;
+
+            // Fiş döküm etiketleri (Ara Toplam & KDV)
+            _lblSubtotal = new Label
+            {
+                Text = "Ara Toplam: 0.00 ₺",
+                Font = new Font("Segoe UI", 9F),
+                ForeColor = AppTheme.TextSecondary,
+                Location = new Point(14, 20),
+                AutoSize = true
+            };
+            guna2Panel2.Controls.Add(_lblSubtotal);
+
+            _lblTax = new Label
+            {
+                Text = "KDV (%10): 0.00 ₺",
+                Font = new Font("Segoe UI", 9F),
+                ForeColor = AppTheme.TextSecondary,
+                Location = new Point(14, 40),
+                AutoSize = true
+            };
+            guna2Panel2.Controls.Add(_lblTax);
+
+            // Hızlı Nakit Tuşları (50₺, 100₺, 200₺, 500₺, Tam Tutar)
+            _flpQuickCash = new FlowLayoutPanel
+            {
+                Size = new Size(guna2Panel2.Width - 28, 40),
+                Location = new Point(14, 65),
+                FlowDirection = FlowDirection.LeftToRight,
+                BackColor = Color.Transparent
+            };
+            guna2Panel2.Controls.Add(_flpQuickCash);
+
+            int[] cashAmounts = new int[] { 50, 100, 200, 500 };
+            foreach (int amt in cashAmounts)
+            {
+                Guna2Button btnCash = new Guna2Button
+                {
+                    Text = amt + " ₺",
+                    Size = new Size(54, 30),
+                    Margin = new Padding(0, 0, 4, 0),
+                    AutoRoundedCorners = true,
+                    FillColor = AppTheme.Secondary,
+                    ForeColor = AppTheme.TextPrimary,
+                    Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
+                    Cursor = Cursors.Hand
+                };
+                btnCash.Click += (s, e) =>
+                {
+                    double total = double.TryParse(lblTotal.Text, out double t) ? t : 0;
+                    double change = amt - total;
+                    if (change >= 0)
+                        guna2MessageDialog1.Show($"Nakit Alındı: {amt:N2} ₺\nPara Üstü: {change:N2} ₺");
+                    else
+                        guna2MessageDialog1.Show($"Eksik Tutar: {Math.Abs(change):N2} ₺");
+                };
+                _flpQuickCash.Controls.Add(btnCash);
+            }
+
+            // Tam Tutar Butonu
+            Guna2Button btnExact = new Guna2Button
+            {
+                Text = "Tam",
+                Size = new Size(50, 30),
+                AutoRoundedCorners = true,
+                FillColor = AppTheme.Success,
+                ForeColor = Color.White,
+                Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
+                Cursor = Cursors.Hand
+            };
+            btnExact.Click += (s, e) =>
+            {
+                guna2MessageDialog1.Show($"Tam Tutar Alındı ({lblTotal.Text} ₺). Para Üstü: 0.00 ₺");
+            };
+            _flpQuickCash.Controls.Add(btnExact);
         }
 
         private void ApplyLocalization()
@@ -66,30 +183,41 @@ namespace Restourant_Adisyon.Mmodel
         // ── Kategori Butonları ───────────────────────────────────────────────────
         private void AddCategory()
         {
-            string qry = "SELECT * FROM category";
-            DataTable dt = MainClass.GetDataTable(qry);
-
             CategoryPanel.Controls.Clear();
 
             // "Tümü" / "All" butonu
             string allText = LocalizationService.Instance.GetString("All_Categories");
-            Guna.UI2.WinForms.Guna2Button b2 = new Guna.UI2.WinForms.Guna2Button();
-            b2.FillColor = Color.FromArgb(50, 55, 89);
-            b2.Size      = new Size(134, 45);
-            b2.ButtonMode = Guna.UI2.WinForms.Enums.ButtonMode.RadioButton;
-            b2.Text      = allText;
-            b2.CheckedState.FillColor = Color.FromArgb(241, 85, 126);
+            Guna2Button b2 = new Guna2Button
+            {
+                FillColor = AppTheme.Secondary,
+                Size = new Size(130, 42),
+                ButtonMode = Guna.UI2.WinForms.Enums.ButtonMode.RadioButton,
+                Text = allText,
+                AutoRoundedCorners = true,
+                Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
+                ForeColor = AppTheme.TextPrimary,
+                Checked = true
+            };
+            b2.CheckedState.FillColor = AppTheme.BrandPrimary;
+            b2.CheckedState.ForeColor = Color.White;
             b2.Click += new EventHandler(b_click);
             CategoryPanel.Controls.Add(b2);
 
-            foreach (DataRow row in dt.Rows)
+            var categories = PosManager.Instance.GetCategories();
+            foreach (var cat in categories)
             {
-                Guna.UI2.WinForms.Guna2Button b = new Guna.UI2.WinForms.Guna2Button();
-                b.FillColor = Color.FromArgb(94, 148, 255);
-                b.Size      = new Size(180, 45);
-                b.ButtonMode = Guna.UI2.WinForms.Enums.ButtonMode.RadioButton;
-                b.Text      = row["catName"].ToString();
-                b.CheckedState.FillColor = Color.FromArgb(241, 85, 126);
+                Guna2Button b = new Guna2Button
+                {
+                    FillColor = AppTheme.Secondary,
+                    Size = new Size(140, 42),
+                    ButtonMode = Guna.UI2.WinForms.Enums.ButtonMode.RadioButton,
+                    Text = cat.Name,
+                    AutoRoundedCorners = true,
+                    Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
+                    ForeColor = AppTheme.TextPrimary
+                };
+                b.CheckedState.FillColor = AppTheme.BrandPrimary;
+                b.CheckedState.ForeColor = Color.White;
                 b.Click += new EventHandler(b_click);
                 CategoryPanel.Controls.Add(b);
             }
@@ -98,7 +226,7 @@ namespace Restourant_Adisyon.Mmodel
         private void b_click(object sender, EventArgs e)
         {
             string allText = LocalizationService.Instance.GetString("All_Categories");
-            Guna.UI2.WinForms.Guna2Button b = (Guna.UI2.WinForms.Guna2Button)sender;
+            Guna2Button b = (Guna2Button)sender;
             if (b.Text == allText || b.Text == "Tümü" || b.Text == "All")
             {
                 foreach (var item in ProductPanel.Controls)
@@ -115,24 +243,11 @@ namespace Restourant_Adisyon.Mmodel
         // ── Ürün Yükleme ────────────────────────────────────────────────────────
         private void LoadProducts()
         {
-            string qry = @"SELECT p.*, c.catName FROM products p
-                           INNER JOIN category c ON c.catID = p.CategoryID";
-            DataTable dt = MainClass.GetDataTable(qry);
+            var products = PosManager.Instance.GetProducts();
 
-            foreach (DataRow item in dt.Rows)
+            foreach (var p in products)
             {
-                Image pImage = null;
-                try
-                {
-                    if (item["pImage"] != DBNull.Value && item["pImage"] is byte[] imgBytes && imgBytes.Length > 0)
-                        pImage = Image.FromStream(new MemoryStream(imgBytes));
-                }
-                catch { /* Görsel yoksa null bırak */ }
-
-                AddItem(item["pID"].ToString(), item["pName"].ToString(),
-                        item["catName"].ToString(), item["pPrice"].ToString(),
-                        item["pBarcode"] != DBNull.Value ? item["pBarcode"].ToString() : "",
-                        pImage);
+                AddItem(p.Id.ToString(), p.Name, p.CategoryName, p.Price.ToString("0.00"), p.Barcode, p.ProductImage);
             }
         }
 
@@ -175,24 +290,20 @@ namespace Restourant_Adisyon.Mmodel
         }
 
         // ── Barkod Okuyucu Algılama ──────────────────────────────────────────────
-        // Barkod okuyucular klavye gibi hızlı karakter gönderir ve Enter ile bitirir.
         protected override void OnKeyPress(KeyPressEventArgs e)
         {
             base.OnKeyPress(e);
 
-            // Arama kutusu odaklanmışsa normal yazma devam etsin
             if (txtSearch.Focused) return;
 
             double elapsed = (DateTime.Now - _lastKeyTime).TotalMilliseconds;
             _lastKeyTime = DateTime.Now;
 
-            // Çok hızlı karakter geliyorsa barkod tamponu doldur
             if (elapsed < 80)
                 _barcodeBuffer += e.KeyChar;
             else
                 _barcodeBuffer = e.KeyChar.ToString();
 
-            // Enter = barkod tamamlandı
             if (e.KeyChar == '\r' || e.KeyChar == '\n')
             {
                 string barcode = _barcodeBuffer.Trim().Replace("\r", "").Replace("\n", "");
@@ -204,10 +315,10 @@ namespace Restourant_Adisyon.Mmodel
 
         private void ProcessBarcode(string barcode)
         {
-            DataRow row = MainClass.FindProductByBarcode(barcode);
-            if (row != null)
+            var p = PosManager.Instance.FindProductByBarcode(barcode);
+            if (p != null)
             {
-                AddToCart(Convert.ToInt32(row["pID"]), row["pName"].ToString(), row["pPrice"].ToString());
+                AddToCart(p.Id, p.Name, p.Price.ToString("0.00"));
             }
             else
             {
@@ -246,14 +357,39 @@ namespace Restourant_Adisyon.Mmodel
                     tot += double.Parse(item.Cells["dgvAmount"].Value.ToString());
             }
             lblTotal.Text = tot.ToString("N2");
+
+            // KDV ve Ara Toplamı güncelle
+            double subtotal = tot / 1.10;
+            double tax = tot - subtotal;
+            if (_lblSubtotal != null) _lblSubtotal.Text = $"Ara Toplam: {subtotal:N2} ₺";
+            if (_lblTax != null)      _lblTax.Text      = $"KDV (%10): {tax:N2} ₺";
         }
 
-        // ── Sepetten Ürün Kaldır (Delete) ───────────────────────────────────────
+        // ── Sepetten Ürün Kaldır (Delete) & Miktar Değiştirme ─────────────────────
         private void guna2DataGridView1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete && guna2DataGridView1.CurrentRow != null)
             {
                 guna2DataGridView1.Rows.RemoveAt(guna2DataGridView1.CurrentRow.Index);
+                GetTotal();
+            }
+            else if (e.KeyCode == Keys.Add && guna2DataGridView1.CurrentRow != null)
+            {
+                int qty = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvQty"].Value) + 1;
+                guna2DataGridView1.CurrentRow.Cells["dgvQty"].Value = qty;
+                guna2DataGridView1.CurrentRow.Cells["dgvAmount"].Value = qty * double.Parse(guna2DataGridView1.CurrentRow.Cells["dgvPrice"].Value.ToString());
+                GetTotal();
+            }
+            else if (e.KeyCode == Keys.Subtract && guna2DataGridView1.CurrentRow != null)
+            {
+                int qty = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvQty"].Value) - 1;
+                if (qty <= 0)
+                    guna2DataGridView1.Rows.RemoveAt(guna2DataGridView1.CurrentRow.Index);
+                else
+                {
+                    guna2DataGridView1.CurrentRow.Cells["dgvQty"].Value = qty;
+                    guna2DataGridView1.CurrentRow.Cells["dgvAmount"].Value = qty * double.Parse(guna2DataGridView1.CurrentRow.Cells["dgvPrice"].Value.ToString());
+                }
                 GetTotal();
             }
         }
@@ -266,7 +402,8 @@ namespace Restourant_Adisyon.Mmodel
             guna2DataGridView1.Rows.Clear();
             MainID = 0;
             lblTotal.Text = "0.00";
-            OrderType = "";
+            OrderType = "Masada";
+            GetTotal();
         }
 
         private void btnDelivery_Click(object sender, EventArgs e)
@@ -398,7 +535,7 @@ namespace Restourant_Adisyon.Mmodel
                     }
                 }
 
-                guna2MessageDialog1.Show("Sipariş kaydedildi!");
+                guna2MessageDialog1.Show("Sipariş mutfağa gönderildi!");
                 btnNew_Click(null, null);
             }
             catch (Exception ex)
@@ -422,14 +559,21 @@ namespace Restourant_Adisyon.Mmodel
             }
         }
 
-        // ── Ödeme Al ────────────────────────────────────────────────────────────
+        // ── Ödeme Al (Checkout) ──────────────────────────────────────────────────
         private void btnCheckout_Click(object sender, EventArgs e)
         {
+            // Eğer sipariş henüz kaydedilmemişse otomatik kaydet ve ödemeye geç
             if (MainID == 0)
             {
-                guna2MessageDialog1.Show("Lütfen önce bir fatura seçin.");
-                return;
+                if (guna2DataGridView1.Rows.Count == 0)
+                {
+                    guna2MessageDialog1.Show("Lütfen önce sepete ürün ekleyin.");
+                    return;
+                }
+                btnKot_Click(null, null);
             }
+
+            if (MainID == 0) return;
 
             frmCheckout frm = new frmCheckout();
             frm.MainID = MainID;

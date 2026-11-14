@@ -175,6 +175,12 @@
     <Compile Include="Core\Enums\OrderStatus.cs" />
     <Compile Include="Core\Enums\PaymentMethod.cs" />
     <Compile Include="Core\Enums\Language.cs" />
+    <Compile Include="Core\Enums\ThemeMode.cs" />
+    <Compile Include="Core\Enums\TableStatus.cs" />
+    <Compile Include="Core\DTOs\DashboardSummaryDto.cs" />
+    <Compile Include="Core\DTOs\TableCardDto.cs" />
+    <Compile Include="Core\DTOs\ProductCardDto.cs" />
+    <Compile Include="Core\DTOs\KitchenOrderDto.cs" />
     <Compile Include="Core\Entities\Product.cs" />
     <Compile Include="Core\Entities\Category.cs" />
     <Compile Include="Core\Entities\Table.cs" />
@@ -189,6 +195,11 @@
     <Compile Include="Business\Services\OrderService.cs" />
     <Compile Include="Business\Services\PrintService.cs" />
     <Compile Include="Business\Services\LocalizationService.cs" />
+    <Compile Include="Business\Managers\ThemeManager.cs" />
+    <Compile Include="Business\Managers\DashboardManager.cs" />
+    <Compile Include="Business\Managers\TableManager.cs" />
+    <Compile Include="Business\Managers\KitchenManager.cs" />
+    <Compile Include="Business\Managers\PosManager.cs" />
     <Compile Include="UI\Theme\ButtonRole.cs" />
     <Compile Include="UI\Theme\AppTheme.cs" />
     <Compile Include="UI\Controls\GridStyler.cs" />

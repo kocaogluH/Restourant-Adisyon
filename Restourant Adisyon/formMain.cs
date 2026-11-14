@@ -1,4 +1,5 @@
 using Guna.UI2.WinForms;
+using Restourant_Adisyon.Business.Managers;
 using Restourant_Adisyon.Business.Services;
 using Restourant_Adisyon.Core.Enums;
 using Restourant_Adisyon.Mmodel;
@@ -12,6 +13,8 @@ namespace Restourant_Adisyon
     public partial class formMain : Form
     {
         private Guna2Button _btnLangToggle;
+        private Guna2Button _btnThemeToggle;
+        private Form _currentChildForm;
 
         public formMain()
         {
@@ -30,6 +33,7 @@ namespace Restourant_Adisyon
 
         public void AddControls(Form f)
         {
+            _currentChildForm = f;
             ControlsPanel.Controls.Clear();
             f.Dock = DockStyle.Fill;
             f.TopLevel = false;
@@ -46,11 +50,12 @@ namespace Restourant_Adisyon
         {
             _obj = this;
 
-            // Dil değişikliği event'ini dinle
+            // Dil ve Tema değişikliklerini dinle
             LocalizationService.Instance.OnLanguageChanged += Instance_OnLanguageChanged;
+            ThemeManager.Instance.OnThemeChanged += Instance_OnThemeChanged;
 
-            // Üst bar dil değiştirme butonunu ekle
-            SetupLanguageButton();
+            // Üst bar butonlarını ekle (Dil + Tema Değiştirici)
+            SetupTopBarControls();
 
             // Aktif Kullanıcı ve Rol gösterimi
             UpdateUserLabel();
@@ -74,21 +79,23 @@ namespace Restourant_Adisyon
             }
         }
 
-        private void SetupLanguageButton()
+        private void SetupTopBarControls()
         {
             if (guna2CustomGradientPanel1 == null) return;
 
+            // Dil Butonu (TR / EN)
             _btnLangToggle = new Guna2Button
             {
                 Text = LocalizationService.Instance.CurrentLanguage == Language.TR ? "🇹🇷 TR" : "🇬🇧 EN",
-                Size = new Size(80, 32),
-                Location = new Point(guna2CustomGradientPanel1.Width - 230, 13),
+                Size = new Size(82, 34),
+                Location = new Point(guna2CustomGradientPanel1.Width - 190, 13),
                 Anchor = AnchorStyles.Top | AnchorStyles.Right,
                 AutoRoundedCorners = true,
-                FillColor = Color.FromArgb(241, 85, 126),
+                FillColor = ThemeManager.Instance.BrandPrimary,
                 ForeColor = Color.White,
                 Font = new Font("Segoe UI", 9F, FontStyle.Bold),
-                Animated = true
+                Animated = true,
+                Cursor = Cursors.Hand
             };
 
             _btnLangToggle.Click += (s, e) =>
@@ -99,17 +106,63 @@ namespace Restourant_Adisyon
                 LocalizationService.Instance.ChangeLanguage(nextLang);
             };
 
+            // Tema Değiştirme Butonu (🌙 Cyber Dark / 👑 Luxury Amber / ☀️ Clean Light)
+            _btnThemeToggle = new Guna2Button
+            {
+                Text = ThemeManager.Instance.GetThemeIcon() + " " + ThemeManager.Instance.GetThemeName(),
+                Size = new Size(160, 34),
+                Location = new Point(guna2CustomGradientPanel1.Width - 360, 13),
+                Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                AutoRoundedCorners = true,
+                FillColor = ThemeManager.Instance.SurfaceElevated,
+                ForeColor = ThemeManager.Instance.TextPrimary,
+                Font = new Font("Segoe UI", 9F, FontStyle.Bold),
+                Animated = true,
+                Cursor = Cursors.Hand
+            };
+
+            _btnThemeToggle.Click += (s, e) =>
+            {
+                ThemeManager.Instance.CycleNextTheme();
+            };
+
             guna2CustomGradientPanel1.Controls.Add(_btnLangToggle);
+            guna2CustomGradientPanel1.Controls.Add(_btnThemeToggle);
         }
 
         private void Instance_OnLanguageChanged(object sender, EventArgs e)
         {
             if (_btnLangToggle != null)
-            {
                 _btnLangToggle.Text = LocalizationService.Instance.CurrentLanguage == Language.TR ? "🇹🇷 TR" : "🇬🇧 EN";
-            }
+
             UpdateUserLabel();
             ApplyModernSidebarStyle();
+        }
+
+        private void Instance_OnThemeChanged(object sender, ThemeMode e)
+        {
+            if (_btnThemeToggle != null)
+            {
+                _btnThemeToggle.Text = ThemeManager.Instance.GetThemeIcon() + " " + ThemeManager.Instance.GetThemeName();
+                _btnThemeToggle.FillColor = ThemeManager.Instance.SurfaceElevated;
+                _btnThemeToggle.ForeColor = ThemeManager.Instance.TextPrimary;
+            }
+
+            if (_btnLangToggle != null)
+            {
+                _btnLangToggle.FillColor = ThemeManager.Instance.BrandPrimary;
+            }
+
+            UpdateUserLabel();
+            ApplyModernSidebarStyle();
+
+            // Açık olan mevcut formu yeniden yükle
+            if (_currentChildForm != null && !_currentChildForm.IsDisposed)
+            {
+                Type formType = _currentChildForm.GetType();
+                Form newInstance = (Form)Activator.CreateInstance(formType);
+                AddControls(newInstance);
+            }
         }
 
         private void UpdateUserLabel()
@@ -119,23 +172,27 @@ namespace Restourant_Adisyon
                 string activeText = LocalizationService.Instance.GetString("Active_User");
                 lblUser.Text = $"{activeText}: {MainClass.USER} ({MainClass.ROLE})";
                 lblUser.Font = new Font("Segoe UI", 10F, FontStyle.Bold);
-                lblUser.ForeColor = Color.FromArgb(50, 55, 89);
+                lblUser.ForeColor = ThemeManager.Instance.TextPrimary;
             }
         }
 
         private void ApplyModernSidebarStyle()
         {
-            // Sol panel rengi (Şık koyu lacivert/indigo)
-            guna2Panel1.FillColor = Color.FromArgb(34, 38, 58);
+            // Panel & Arka Plan Renkleri
+            guna2Panel1.FillColor = ThemeManager.Instance.SidebarBackground;
             guna2Panel1.Width = 215;
+
+            if (ControlsPanel != null)
+                ControlsPanel.BackColor = ThemeManager.Instance.Background;
 
             // Üst başlık paneli rengi
             if (guna2CustomGradientPanel1 != null)
             {
-                guna2CustomGradientPanel1.FillColor  = Color.FromArgb(245, 247, 250);
-                guna2CustomGradientPanel1.FillColor2 = Color.FromArgb(245, 247, 250);
-                guna2CustomGradientPanel1.FillColor3 = Color.FromArgb(245, 247, 250);
-                guna2CustomGradientPanel1.FillColor4 = Color.FromArgb(245, 247, 250);
+                Color headerCol = ThemeManager.Instance.HeaderBackground;
+                guna2CustomGradientPanel1.FillColor  = headerCol;
+                guna2CustomGradientPanel1.FillColor2 = headerCol;
+                guna2CustomGradientPanel1.FillColor3 = headerCol;
+                guna2CustomGradientPanel1.FillColor4 = headerCol;
             }
 
             // Çakışan ekstra resim kutularını gizle
@@ -155,7 +212,7 @@ namespace Restourant_Adisyon
             {
                 label1.Text = LocalizationService.Instance.GetString("App_Title");
                 label1.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
-                label1.ForeColor = Color.FromArgb(241, 85, 126);
+                label1.ForeColor = ThemeManager.Instance.BrandPrimary;
                 label1.TextAlign = ContentAlignment.MiddleCenter;
             }
 
@@ -197,16 +254,6 @@ namespace Restourant_Adisyon
                 btn.UseTransparentBackground = true;
                 btn.BorderThickness = 0;
                 btn.BorderColor = Color.Transparent;
-                btn.CustomBorderThickness = new Padding(0);
-                btn.CustomBorderColor = Color.Transparent;
-
-                if (btn.CustomizableEdges != null)
-                {
-                    btn.CustomizableEdges.TopLeft     = true;
-                    btn.CustomizableEdges.TopRight    = true;
-                    btn.CustomizableEdges.BottomLeft  = true;
-                    btn.CustomizableEdges.BottomRight = true;
-                }
 
                 btn.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
                 btn.ImageAlign = HorizontalAlignment.Left;
@@ -215,17 +262,15 @@ namespace Restourant_Adisyon
 
                 // Normal Durum
                 btn.FillColor = Color.Transparent;
-                btn.ForeColor = Color.FromArgb(185, 195, 220);
+                btn.ForeColor = ThemeManager.Instance.TextSecondary;
 
                 // Hover Durum
-                btn.HoverState.FillColor = Color.FromArgb(55, 62, 92);
+                btn.HoverState.FillColor = ThemeManager.Instance.SurfaceElevated;
                 btn.HoverState.ForeColor = Color.White;
-                btn.HoverState.CustomBorderColor = Color.Transparent;
 
-                // Checked Durum (Oval Pembe Kapsül)
-                btn.CheckedState.FillColor = Color.FromArgb(241, 85, 126);
+                // Checked Durum (Tema Renginde Kapsül)
+                btn.CheckedState.FillColor = ThemeManager.Instance.BrandPrimary;
                 btn.CheckedState.ForeColor = Color.White;
-                btn.CheckedState.CustomBorderColor = Color.Transparent;
 
                 currentY += btnHeight + spacing;
             }

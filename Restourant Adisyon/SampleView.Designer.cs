@@ -159,7 +159,7 @@ namespace Restourant_Adisyon
         }
 
         #endregion
-        private System.Windows.Forms.Label label1;
+        public System.Windows.Forms.Label label1;
         public Guna.UI2.WinForms.Guna2TextBox txtSearch;
         public Guna.UI2.WinForms.Guna2ImageButton btnAdd;
         public System.Windows.Forms.Label label2;

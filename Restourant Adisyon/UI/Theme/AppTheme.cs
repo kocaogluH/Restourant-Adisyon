@@ -1,4 +1,5 @@
 using Guna.UI2.WinForms;
+using Restourant_Adisyon.Business.Managers;
 using System.Drawing;
 using System.Windows.Forms;
 
@@ -6,22 +7,25 @@ namespace Restourant_Adisyon.UI.Theme
 {
     public static class AppTheme
     {
-        // ── MERKEZİ RENK PALETİ ──────────────────────────────────────────────────
-        public static readonly Color Background        = Color.FromArgb(34, 38, 58);   // Koyu Indigo Arka Plan
-        public static readonly Color CardBackground    = Color.FromArgb(44, 49, 74);   // Kart & Panel Arka Planı
-        public static readonly Color HeaderBackground  = Color.FromArgb(245, 247, 250); // Aydınlık Üst Bar
-        public static readonly Color TextPrimary       = Color.White;
-        public static readonly Color TextSecondary     = Color.FromArgb(175, 185, 210);
+        // ── DİNAMİK MERKEZİ RENK PALETİ (ThemeManager ile Senkronize) ─────────────
+        public static Color Background        => ThemeManager.Instance.Background;
+        public static Color CardBackground    => ThemeManager.Instance.SurfaceCard;
+        public static Color HeaderBackground  => ThemeManager.Instance.HeaderBackground;
+        public static Color SidebarBackground => ThemeManager.Instance.SidebarBackground;
+        public static Color TextPrimary       => ThemeManager.Instance.TextPrimary;
+        public static Color TextSecondary     => ThemeManager.Instance.TextSecondary;
+        public static Color BorderColor       => ThemeManager.Instance.BorderColor;
 
-        // ── ROL BAZLI RENKLER ────────────────────────────────────────────────────
-        public static readonly Color BrandPrimary      = Color.FromArgb(241, 85, 126); // Pembe (#F1557E)
-        public static readonly Color Success           = Color.FromArgb(16, 185, 129); // Yeşil (#10B981)
-        public static readonly Color Danger            = Color.FromArgb(239, 68, 68);  // Kırmızı (#EF4444)
-        public static readonly Color Info              = Color.FromArgb(94, 148, 255); // Mavi (#5E94FF)
-        public static readonly Color Warning           = Color.FromArgb(245, 158, 11); // Turuncu (#F59E0B)
-        public static readonly Color Secondary         = Color.FromArgb(55, 62, 92);   // Nötr Gri/Koyu
+        // ── ROL BAZLI RENKLER ──────────────────────────────────────────────────
+        public static Color BrandPrimary      => ThemeManager.Instance.BrandPrimary;
+        public static Color BrandSecondary    => ThemeManager.Instance.BrandSecondary;
+        public static Color Success           => ThemeManager.Instance.Success;
+        public static Color Danger            => ThemeManager.Instance.Danger;
+        public static Color Info              => ThemeManager.Instance.Info;
+        public static Color Warning           => ThemeManager.Instance.Warning;
+        public static Color Secondary         => ThemeManager.Instance.SurfaceElevated;
 
-        // ── YARDIMCI METOTLAR ────────────────────────────────────────────────────
+        // ── YARDIMCI METOTLAR ──────────────────────────────────────────────────
         public static void StyleButton(Control btn, ButtonRole role)
         {
             if (btn == null) return;
@@ -45,8 +49,8 @@ namespace Restourant_Adisyon.UI.Theme
                 gBtn.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
                 gBtn.ForeColor = Color.White;
                 gBtn.FillColor = baseColor;
-                gBtn.HoverState.FillColor = ControlPaint.Dark(baseColor, 0.1f);
-                gBtn.CheckedState.FillColor = ControlPaint.Dark(baseColor, 0.2f);
+                gBtn.HoverState.FillColor = ControlPaint.Dark(baseColor, 0.12f);
+                gBtn.CheckedState.FillColor = ControlPaint.Dark(baseColor, 0.22f);
             }
             else if (btn is Button stdBtn)
             {
@@ -58,10 +62,27 @@ namespace Restourant_Adisyon.UI.Theme
             }
         }
 
+        public static void StyleCard(Control panel)
+        {
+            if (panel == null) return;
+            if (panel is Guna2Panel gPanel)
+            {
+                gPanel.FillColor = CardBackground;
+                gPanel.BorderRadius = 14;
+                gPanel.BorderColor = BorderColor;
+                gPanel.BorderThickness = 1;
+            }
+            else if (panel is Panel stdPanel)
+            {
+                stdPanel.BackColor = CardBackground;
+            }
+        }
+
         public static void ApplyFormTheme(Form form)
         {
             if (form == null) return;
-            form.BackColor = Color.White;
+            form.BackColor = Background;
+            form.ForeColor = TextPrimary;
             form.Font = new Font("Segoe UI", 9.75F, FontStyle.Regular, GraphicsUnit.Point);
         }
     }
