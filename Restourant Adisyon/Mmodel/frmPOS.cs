@@ -46,6 +46,11 @@ namespace Restourant_Adisyon.Mmodel
 
         private void frmPOS_Load(object sender, EventArgs e)
         {
+            if (lblTable != null && (lblTable.Text == "Table" || string.IsNullOrWhiteSpace(lblTable.Text)))
+                lblTable.Text = "";
+            if (lblWaiter != null && (lblWaiter.Text == "Waiter" || string.IsNullOrWhiteSpace(lblWaiter.Text)))
+                lblWaiter.Text = "";
+
             SetupModernHeader();
             ApplyThemeAndStyling();
 
@@ -80,7 +85,7 @@ namespace Restourant_Adisyon.Mmodel
                     Text = "⚡ RESTO POS",
                     Font = new Font("Segoe UI", 13.5F, FontStyle.Bold),
                     ForeColor = Color.White,
-                    Location = new Point(20, 18),
+                    Location = new Point(18, 18),
                     AutoSize = true,
                     BackColor = Color.Transparent
                 };
@@ -91,7 +96,7 @@ namespace Restourant_Adisyon.Mmodel
                     Text = "Hızlı Adisyon & Satış Terminali",
                     Font = new Font("Segoe UI", 8.5F),
                     ForeColor = Color.FromArgb(148, 163, 184),
-                    Location = new Point(22, 46),
+                    Location = new Point(20, 46),
                     AutoSize = true,
                     BackColor = Color.Transparent
                 };
@@ -103,9 +108,9 @@ namespace Restourant_Adisyon.Mmodel
             {
                 _badgeTable = new Guna2Button
                 {
-                    Text = "🪑 Masa Seçilmedi",
-                    Size = new Size(140, 36),
-                    Location = new Point(230, 24),
+                    Text = "🪑 Masa Seç",
+                    Size = new Size(130, 36),
+                    Location = new Point(190, 24),
                     BorderRadius = 18,
                     FillColor = Color.FromArgb(30, 41, 59),
                     ForeColor = Color.FromArgb(226, 232, 240),
@@ -117,9 +122,9 @@ namespace Restourant_Adisyon.Mmodel
 
                 _badgeWaiter = new Guna2Button
                 {
-                    Text = "👤 Garson Seçilmedi",
-                    Size = new Size(140, 36),
-                    Location = new Point(378, 24),
+                    Text = "👤 Garson Seç",
+                    Size = new Size(130, 36),
+                    Location = new Point(328, 24),
                     BorderRadius = 18,
                     FillColor = Color.FromArgb(30, 41, 59),
                     ForeColor = Color.FromArgb(226, 232, 240),
@@ -139,16 +144,22 @@ namespace Restourant_Adisyon.Mmodel
                 guna2Panel1.Controls.Add(_badgeWaiter);
             }
 
-            // 3. Servis Tipi Butonları (Masada, Gel Al, Paket) Modern Pill Tasarımı
-            StyleServiceButton(btnDin, "🍽️ Masada", 528);
-            StyleServiceButton(btnTake, "🥡 Gel Al", 632);
-            StyleServiceButton(btnDelivery, "🛵 Paket", 736);
+            // 3. Servis Tipi Butonları (Masada, Gel Al, Paket)
+            StyleServiceButton(btnDin, "🍽️ Masada", 466);
+            StyleServiceButton(btnTake, "🥡 Gel Al", 562);
+            StyleServiceButton(btnDelivery, "🛵 Paket", 658);
 
-            // 4. İşlem Butonları (New, Bill, KOT, Checkout)
-            StyleActionButton(btnNew, "➕ Yeni", 848, AppTheme.Secondary, Color.White);
-            StyleActionButton(btnBill, "📋 Adisyonlar", 934, Color.FromArgb(71, 85, 105), Color.White);
-            StyleActionButton(btnKot, "🍳 Mutfak (KOT)", 1050, AppTheme.BrandPrimary, Color.White);
-            StyleActionButton(btnCheckout, "💳 Ödeme Al", 1195, AppTheme.Success, Color.White);
+            // 4. İşlem Butonları (New, Bill, KOT, Checkout) - Kesinlikle Beyaz Üstüne Beyaz Olamaz
+            StyleActionButton(btnNew, "➕ Yeni", 758, Color.FromArgb(51, 65, 85), Color.White);
+            StyleActionButton(btnBill, "📋 Adisyonlar", 846, Color.FromArgb(71, 85, 105), Color.White);
+            StyleActionButton(btnKot, "🍳 Mutfak (KOT)", 958, AppTheme.BrandPrimary, Color.White);
+            StyleActionButton(btnCheckout, "💳 Ödeme Al", 1094, AppTheme.Success, Color.White);
+
+            // Eski çakışan daire güç butonunu gizle
+            if (btnExit != null)
+            {
+                btnExit.Visible = false;
+            }
 
             UpdateServiceTypeButtons();
             UpdateBadges();
@@ -158,7 +169,7 @@ namespace Restourant_Adisyon.Mmodel
         {
             if (btn == null) return;
             btn.Text = text;
-            btn.Size = new Size(98, 38);
+            btn.Size = new Size(90, 38);
             btn.Location = new Point(xLocation, 23);
             btn.FlatStyle = FlatStyle.Flat;
             btn.FlatAppearance.BorderSize = 0;
@@ -170,8 +181,8 @@ namespace Restourant_Adisyon.Mmodel
         {
             if (btn == null) return;
             btn.Text = text;
-            btn.Size = new Size(btn == btnKot ? 138 : (btn == btnCheckout ? 124 : (btn == btnBill ? 110 : 80)), 40);
-            btn.Location = new Point(xLocation, 22);
+            btn.Size = new Size(btn == btnKot ? 130 : (btn == btnCheckout ? 118 : (btn == btnBill ? 106 : 82)), 38);
+            btn.Location = new Point(xLocation, 23);
             btn.BackColor = bgColor;
             btn.ForeColor = fgColor;
             btn.FlatStyle = FlatStyle.Flat;
@@ -192,9 +203,10 @@ namespace Restourant_Adisyon.Mmodel
 
         private void UpdateBadges()
         {
+            bool hasTable = !string.IsNullOrWhiteSpace(lblTable?.Text) && lblTable.Text != "Table";
             if (_badgeTable != null)
             {
-                if (!string.IsNullOrEmpty(lblTable.Text))
+                if (hasTable)
                 {
                     _badgeTable.Text = "🪑 " + lblTable.Text;
                     _badgeTable.FillColor = Color.FromArgb(16, 185, 129); // Emerald
@@ -208,9 +220,10 @@ namespace Restourant_Adisyon.Mmodel
                 }
             }
 
+            bool hasWaiter = !string.IsNullOrWhiteSpace(lblWaiter?.Text) && lblWaiter.Text != "Waiter";
             if (_badgeWaiter != null)
             {
-                if (!string.IsNullOrEmpty(lblWaiter.Text))
+                if (hasWaiter)
                 {
                     _badgeWaiter.Text = "👤 " + lblWaiter.Text;
                     _badgeWaiter.FillColor = Color.FromArgb(37, 99, 235); // Blue

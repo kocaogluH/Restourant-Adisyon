@@ -86,6 +86,11 @@ namespace Restourant_Adisyon
             SetupTopBarControls();
             ApplyModernSidebarStyle();
 
+            // Ekran yeniden boyutlandığında üst bar çakışmasını önle
+            this.Resize += (s, ev) => LayoutTopBar();
+            if (guna2CustomGradientPanel1 != null)
+                guna2CustomGradientPanel1.Resize += (s, ev) => LayoutTopBar();
+
             // Varsayılan sayfa: Ana Sayfa
             btnHome.Checked = true;
             btnHome_Click(btnHome, null);
@@ -150,14 +155,12 @@ namespace Restourant_Adisyon
             // Eski lblUser'ı gizle
             if (lblUser != null) lblUser.Visible = false;
 
-            // Modern Kullanıcı Rozeti (Sağ üst kullanıcı kartı)
+            // Modern Kullanıcı Rozeti
             if (_pnlUserChip == null)
             {
                 _pnlUserChip = new Guna2Panel
                 {
-                    Size = new Size(180, 36),
-                    Location = new Point(guna2CustomGradientPanel1.Width - 430, 12),
-                    Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                    Size = new Size(175, 36),
                     BorderRadius = 18,
                     BorderThickness = 1,
                     BorderColor = ThemeManager.Instance.BorderColor,
@@ -182,9 +185,7 @@ namespace Restourant_Adisyon
                 _btnThemeToggle = new Guna2Button
                 {
                     Text = ThemeManager.Instance.GetThemeIcon() + " " + ThemeManager.Instance.GetThemeName(),
-                    Size = new Size(140, 36),
-                    Location = new Point(guna2CustomGradientPanel1.Width - 240, 12),
-                    Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                    Size = new Size(145, 36),
                     AutoRoundedCorners = true,
                     FillColor = ThemeManager.Instance.SurfaceElevated,
                     ForeColor = ThemeManager.Instance.TextPrimary,
@@ -202,9 +203,7 @@ namespace Restourant_Adisyon
                 _btnLangToggle = new Guna2Button
                 {
                     Text = LocalizationService.Instance.CurrentLanguage == Language.TR ? "🇹🇷 TR" : "🇬🇧 EN",
-                    Size = new Size(74, 36),
-                    Location = new Point(guna2CustomGradientPanel1.Width - 92, 12),
-                    Anchor = AnchorStyles.Top | AnchorStyles.Right,
+                    Size = new Size(72, 36),
                     AutoRoundedCorners = true,
                     FillColor = ThemeManager.Instance.BrandPrimary,
                     ForeColor = Color.White,
@@ -220,6 +219,38 @@ namespace Restourant_Adisyon
                     LocalizationService.Instance.ChangeLanguage(nextLang);
                 };
                 guna2CustomGradientPanel1.Controls.Add(_btnLangToggle);
+            }
+
+            LayoutTopBar();
+        }
+
+        private void LayoutTopBar()
+        {
+            if (guna2CustomGradientPanel1 == null) return;
+
+            // Pencere kontrol kutucukları (Simge, Büyüt, Kapat) sağdan 155px alan kaplar.
+            // 170px güvenlik payı bırakılarak butonların çakışması kesin olarak engellenir.
+            int rightMargin = 175;
+            int currentRight = guna2CustomGradientPanel1.Width - rightMargin;
+
+            if (_btnLangToggle != null)
+            {
+                currentRight -= _btnLangToggle.Width;
+                _btnLangToggle.Location = new Point(currentRight, 12);
+                currentRight -= 8;
+            }
+
+            if (_btnThemeToggle != null)
+            {
+                currentRight -= _btnThemeToggle.Width;
+                _btnThemeToggle.Location = new Point(currentRight, 12);
+                currentRight -= 10;
+            }
+
+            if (_pnlUserChip != null)
+            {
+                currentRight -= _pnlUserChip.Width;
+                _pnlUserChip.Location = new Point(currentRight, 12);
             }
         }
 

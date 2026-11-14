@@ -58,19 +58,16 @@ namespace Restourant_Adisyon
             {
                 label2.Font = new Font("Segoe UI", 16F, FontStyle.Bold);
                 label2.ForeColor = AppTheme.TextPrimary;
-                label2.Location = new Point(32, 22);
+                label2.Location = new Point(32, 20);
             }
 
-            // 2. Alt Açıklama / Arama Bilgisi (label1)
+            // 2. Ortada başıboş gezen "Ara.." etiketini gizle (Search kutusunda zaten placeholder var)
             if (label1 != null)
             {
-                label1.Font = new Font("Segoe UI", 9.5F);
-                label1.ForeColor = AppTheme.TextSecondary;
-                label1.Text = "Kayıtları filtrelemek için arama kutusunu kullanın.";
-                label1.Location = new Point(34, 56);
+                label1.Visible = false;
             }
 
-            // 3. Arama Çubuğu (txtSearch)
+            // 3. Arama Çubuğu (txtSearch) - Üst sağ köşede butonla aynı hizada
             if (txtSearch != null)
             {
                 txtSearch.BorderRadius = 8;
@@ -79,25 +76,27 @@ namespace Restourant_Adisyon
                 txtSearch.FillColor = AppTheme.CardBackground;
                 txtSearch.ForeColor = AppTheme.TextPrimary;
                 txtSearch.Font = new Font("Segoe UI", 10F);
-                txtSearch.Height = 40;
+                txtSearch.Height = 38;
+                txtSearch.Location = new Point(this.Width - 360, 68);
                 txtSearch.PlaceholderText = "🔍 Listede ara...";
             }
 
-            // 4. Yeni Ekle Butonu (btnAdd)
+            // 4. Yeni Ekle Butonu (btnAdd) - Üst sol hizada
             if (btnAdd != null)
             {
                 btnAdd.Image = null; // Eski pikselli resmi kaldır
                 btnAdd.BackColor = Color.Transparent;
 
                 // Dinamik olarak şık bir Guna2Button ekle (eğer henüz eklenmediyse)
-                if (this.Controls.Find("btnModernAdd", false).Length == 0)
+                var existingBtn = this.Controls.Find("btnModernAdd", false);
+                if (existingBtn.Length == 0)
                 {
                     Guna2Button btnModern = new Guna2Button
                     {
                         Name = "btnModernAdd",
                         Text = "➕ Yeni Ekle",
-                        Size = new Size(130, 40),
-                        Location = new Point(34, 95),
+                        Size = new Size(130, 38),
+                        Location = new Point(32, 68),
                         BorderRadius = 8,
                         FillColor = AppTheme.BrandPrimary,
                         ForeColor = Color.White,
@@ -110,13 +109,17 @@ namespace Restourant_Adisyon
                     this.Controls.Add(btnModern);
                     btnAdd.Visible = false; // Eski butonu gizle
                 }
+                else
+                {
+                    existingBtn[0].Location = new Point(32, 68);
+                }
             }
 
             // 5. Ayraç Çizgisi
             if (guna2Separator1 != null)
             {
                 guna2Separator1.FillColor = AppTheme.BorderColor;
-                guna2Separator1.Location = new Point(32, 148);
+                guna2Separator1.Location = new Point(32, 118);
             }
         }
 

@@ -48,11 +48,16 @@ namespace Restourant_Adisyon.Vview
 
         private void SetupConcept2MapUi()
         {
+            // Ortadaki başıboş "Ara.." etiketini ve çakışan çizgiyi gizle
+            if (label1 != null) label1.Visible = false;
+            var sep = this.Controls.Find("guna2Separator1", false);
+            if (sep.Length > 0) sep[0].Visible = false;
+
             // Filtre Hapları Çubuğu (Konsept 2 Tarzı Bölge & Durum Filtreleri)
             _flpFilterPills = new FlowLayoutPanel
             {
-                Location = new Point(21, 128),
-                Size = new Size(this.Width - 42, 46),
+                Location = new Point(32, 118),
+                Size = new Size(this.Width - 64, 46),
                 Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right,
                 BackColor = Color.Transparent,
                 FlowDirection = FlowDirection.LeftToRight,
@@ -93,8 +98,8 @@ namespace Restourant_Adisyon.Vview
             // İnteraktif Masa Krokisi Gridi (Konsept 2 Tarzı)
             _flpTableMap = new FlowLayoutPanel
             {
-                Location = new Point(21, 185),
-                Size = new Size(this.Width - 42, this.Height - 200),
+                Location = new Point(32, 172),
+                Size = new Size(this.Width - 64, this.Height - 185),
                 Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right,
                 AutoScroll = true,
                 BackColor = Color.Transparent,
@@ -102,7 +107,12 @@ namespace Restourant_Adisyon.Vview
             };
             this.Controls.Add(_flpTableMap);
 
-            guna2DataGridView1.Visible = false;
+            if (guna2DataGridView1 != null)
+            {
+                guna2DataGridView1.Location = new Point(32, 172);
+                guna2DataGridView1.Size = new Size(this.Width - 64, this.Height - 185);
+                guna2DataGridView1.Visible = false;
+            }
         }
 
         private Guna2Button CreatePill(string text, bool isActive, Action onClick)
