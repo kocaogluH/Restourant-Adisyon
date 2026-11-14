@@ -77,7 +77,7 @@
 			this.label3.Size = new System.Drawing.Size(162, 13);
 			this.label3.TabIndex = 0;
 			this.label3.Tag = "";
-			this.label3.Text = "Plase Eneter User İnformation.";
+			this.label3.Text = "Lütfen giriş bilgilerinizi yazınız.";
 			// 
 			// label1
 			// 
@@ -198,7 +198,7 @@
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.Name = "Form1";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "0,1";
+			this.Text = "RESTO POS - Giriş";
 			this.guna2Panel1.ResumeLayout(false);
 			this.guna2Panel1.PerformLayout();
 			((System.ComponentModel.ISupportInitialize)(this.guna2PictureBox1)).EndInit();
