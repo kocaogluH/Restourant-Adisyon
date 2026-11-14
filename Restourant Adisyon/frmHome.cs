@@ -13,6 +13,7 @@ namespace Restourant_Adisyon
     public partial class frmHome : Form
     {
         private Panel _pnlContainer;
+        private Panel _pnlHero;
         private FlowLayoutPanel _pnlCards;
         private Panel _pnlQuickActions;
         private TableLayoutPanel _pnlBottomSplit;
@@ -21,6 +22,13 @@ namespace Restourant_Adisyon
         private DataGridView _dgvRecentOrders;
         private FlowLayoutPanel _flpTopProducts;
 
+        // Metrik kartı bileşenleri
+        private Label _lblHeroDate;
+        private Label _lblSubRev;
+        private Label _lblSubOrders;
+        private Label _lblSubTables;
+        private Label _lblSubAlerts;
+
         public frmHome()
         {
             InitializeComponent();
@@ -28,7 +36,6 @@ namespace Restourant_Adisyon
 
         private void frmHome_Load(object sender, EventArgs e)
         {
-            // Orijinal kontrolleri modern dinamik container içine al
             SetupModernDashboardLayout();
 
             LocalizationService.Instance.OnLanguageChanged += (s, args) => ApplyLocalization();
@@ -38,8 +45,8 @@ namespace Restourant_Adisyon
             ApplyLocalization();
             LoadDashboardData();
 
-            // Her 20 saniyede canlı veri güncellemesi
-            Timer autoRefreshTimer = new Timer { Interval = 20000 };
+            // Canlı periyodik veri yenileme
+            Timer autoRefreshTimer = new Timer { Interval = 15000 };
             autoRefreshTimer.Tick += (s, ev) => LoadDashboardData();
             autoRefreshTimer.Start();
         }
@@ -54,12 +61,43 @@ namespace Restourant_Adisyon
             {
                 Dock = DockStyle.Fill,
                 AutoScroll = true,
-                Padding = new Padding(24, 20, 24, 20),
+                Padding = new Padding(28, 20, 28, 24),
                 BackColor = AppTheme.Background
             };
             this.Controls.Add(_pnlContainer);
 
-            // ── 1. ÜST KPI KARTLARI PANELİ (FlowLayout) ──────────────────────────
+            // ── 1. KARŞILAMA VE GÜNÜN TARİHİ (HERO BANNER) ──────────────────────
+            _pnlHero = new Panel
+            {
+                Dock = DockStyle.Top,
+                Height = 62,
+                BackColor = Color.Transparent,
+                Margin = new Padding(0, 0, 0, 16)
+            };
+
+            Label lblGreeting = new Label
+            {
+                Text = $"👋 Hoş Geldiniz, {MainClass.USER}!",
+                Font = new Font("Segoe UI", 16F, FontStyle.Bold),
+                ForeColor = AppTheme.TextPrimary,
+                Location = new Point(0, 4),
+                AutoSize = true
+            };
+
+            _lblHeroDate = new Label
+            {
+                Text = $"{DateTime.Now:dd MMMM yyyy, dddd} • Restoran Durumu: Açık & Aktif",
+                Font = new Font("Segoe UI", 9.5F),
+                ForeColor = AppTheme.TextSecondary,
+                Location = new Point(2, 36),
+                AutoSize = true
+            };
+
+            _pnlHero.Controls.Add(lblGreeting);
+            _pnlHero.Controls.Add(_lblHeroDate);
+            _pnlContainer.Controls.Add(_pnlHero);
+
+            // ── 2. ÜST METRİK KARTLARI (4 BÜYÜK KART) ───────────────────────────
             _pnlCards = new FlowLayoutPanel
             {
                 Dock = DockStyle.Top,
@@ -67,98 +105,121 @@ namespace Restourant_Adisyon
                 AutoSizeMode = AutoSizeMode.GrowAndShrink,
                 FlowDirection = FlowDirection.LeftToRight,
                 WrapContents = true,
-                Margin = new Padding(0, 0, 0, 16),
+                Margin = new Padding(0, 10, 0, 16),
                 BackColor = Color.Transparent
             };
             _pnlContainer.Controls.Add(_pnlCards);
+            _pnlContainer.Controls.SetChildIndex(_pnlCards, 0);
 
-            // 4 Kartı Yeniden Boyutlandır ve Şekillendir
-            ConfigureKpiCard(guna2Panel1, label2, lblRevenue, "💰", AppTheme.BrandPrimary);
-            ConfigureKpiCard(guna2Panel2, label4, lblOrders, "🧾", AppTheme.Info);
-            ConfigureKpiCard(guna2Panel3, label6, lblProducts, "🍽️", AppTheme.Success);
-            ConfigureKpiCard(guna2Panel4, label8, lblActiveTables, "🪑", AppTheme.Warning);
+            // 4 Kartı Hazırla
+            BuildMetricCard(guna2Panel1, label2, lblRevenue, out _lblSubRev, "💰", "Toplam Ciro", "Bugün: 0.00 ₺", AppTheme.BrandPrimary);
+            BuildMetricCard(guna2Panel2, label4, lblOrders, out _lblSubOrders, "🧾", "Toplam Sipariş", "Bugün: 0 Adet", AppTheme.Info);
+            BuildMetricCard(guna2Panel4, label8, lblActiveTables, out _lblSubTables, "🪑", "Masa Doluluğu", "%0 Doluluk", AppTheme.Warning);
+            BuildMetricCard(guna2Panel3, label6, lblProducts, out _lblSubAlerts, "🔔", "Mutfak & Stok", "0 Kritik Stok", AppTheme.Success);
 
             _pnlCards.Controls.Add(guna2Panel1);
             _pnlCards.Controls.Add(guna2Panel2);
-            _pnlCards.Controls.Add(guna2Panel3);
             _pnlCards.Controls.Add(guna2Panel4);
+            _pnlCards.Controls.Add(guna2Panel3);
 
-            // ── 2. HIZLI EYLEMLER ÇUBUĞU (Quick Actions) ─────────────────────────
+            // ── 3. HIZLI ERİŞİM EYLEMLERİ (QUICK ACTIONS) ────────────────────────
             _pnlQuickActions = new Panel
             {
                 Dock = DockStyle.Top,
-                Height = 62,
-                Padding = new Padding(0, 10, 0, 10),
+                Height = 60,
+                Padding = new Padding(0, 8, 0, 10),
                 BackColor = Color.Transparent
             };
             _pnlContainer.Controls.Add(_pnlQuickActions);
-            _pnlContainer.Controls.SetChildIndex(_pnlQuickActions, 0); // Üst kartların altına
+            _pnlContainer.Controls.SetChildIndex(_pnlQuickActions, 0);
 
             CreateQuickActionButtons();
 
-            // ── 3. ALT BÖLÜM: 2 SÜTUNLU CANLI PANEL (Recent Orders & Top Products) ──
+            // ── 4. CANLI İKİ SÜTUNLU PANEL (Recent Orders & Top Products) ────────
             _pnlBottomSplit = new TableLayoutPanel
             {
                 Dock = DockStyle.Top,
-                Height = 380,
+                Height = 400,
                 ColumnCount = 2,
                 RowCount = 1,
                 BackColor = Color.Transparent,
-                Margin = new Padding(0, 10, 0, 20)
+                Margin = new Padding(0, 12, 0, 24)
             };
             _pnlBottomSplit.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 58F));
             _pnlBottomSplit.ColumnStyles.Add(new ColumnStyle(SizeType.Percent, 42F));
             _pnlContainer.Controls.Add(_pnlBottomSplit);
             _pnlContainer.Controls.SetChildIndex(_pnlBottomSplit, 0);
 
-            // Sol: Son Siparişler Kartı
+            // Sol: Canlı Son Siparişler Kartı
             _pnlRecentOrders = new Guna2Panel
             {
                 Dock = DockStyle.Fill,
-                BorderRadius = 14,
+                BorderRadius = 16,
                 BorderThickness = 1,
-                Margin = new Padding(0, 0, 12, 0),
-                Padding = new Padding(16)
+                Margin = new Padding(0, 0, 14, 0),
+                Padding = new Padding(18)
             };
             BuildRecentOrdersSection();
             _pnlBottomSplit.Controls.Add(_pnlRecentOrders, 0, 0);
 
-            // Sağ: En Çok Satanlar Kartı
+            // Sağ: En Çok Satanlar Liderlik Tablosu
             _pnlTopSelling = new Guna2Panel
             {
                 Dock = DockStyle.Fill,
-                BorderRadius = 14,
+                BorderRadius = 16,
                 BorderThickness = 1,
-                Margin = new Padding(12, 0, 0, 0),
-                Padding = new Padding(16)
+                Margin = new Padding(14, 0, 0, 0),
+                Padding = new Padding(18)
             };
             BuildTopSellingSection();
             _pnlBottomSplit.Controls.Add(_pnlTopSelling, 1, 0);
         }
 
-        private void ConfigureKpiCard(Guna2Panel card, Label titleLbl, Label valueLbl, string icon, Color accentColor)
+        private void BuildMetricCard(Guna2Panel card, Label titleLbl, Label valueLbl, out Label subLbl, string icon, string defaultTitle, string defaultSub, Color accent)
         {
-            if (card == null) return;
-
-            card.Size = new Size(240, 110);
-            card.Margin = new Padding(0, 0, 16, 16);
+            card.Size = new Size(245, 118);
+            card.Margin = new Padding(0, 0, 18, 16);
             card.BorderRadius = 16;
             card.BorderThickness = 1;
+            card.Controls.Clear();
 
-            if (titleLbl != null)
+            // İkon Rozeti
+            Label lblIcon = new Label
             {
-                titleLbl.Font = new Font("Segoe UI", 10.5F, FontStyle.Bold);
-                titleLbl.Location = new Point(16, 14);
-                titleLbl.AutoSize = true;
-            }
+                Text = icon,
+                Font = new Font("Segoe UI", 16F),
+                Location = new Point(14, 14),
+                Size = new Size(36, 32),
+                TextAlign = ContentAlignment.MiddleCenter
+            };
 
-            if (valueLbl != null)
+            // Başlık
+            titleLbl.Text = defaultTitle;
+            titleLbl.Font = new Font("Segoe UI", 9.5F, FontStyle.Bold);
+            titleLbl.Location = new Point(54, 18);
+            titleLbl.AutoSize = true;
+
+            // Büyük Değer
+            valueLbl.Text = "0";
+            valueLbl.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
+            valueLbl.Location = new Point(14, 48);
+            valueLbl.Size = new Size(215, 36);
+            valueLbl.TextAlign = ContentAlignment.MiddleLeft;
+
+            // Alt Açıklama / Trend
+            subLbl = new Label
             {
-                valueLbl.Font = new Font("Segoe UI", 18F, FontStyle.Bold);
-                valueLbl.Location = new Point(14, 46);
-                valueLbl.Size = new Size(210, 42);
-                valueLbl.TextAlign = ContentAlignment.MiddleLeft;
-            }
+                Text = defaultSub,
+                Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
+                Location = new Point(16, 88),
+                Size = new Size(215, 18),
+                ForeColor = AppTheme.TextSecondary
+            };
+
+            card.Controls.Add(lblIcon);
+            card.Controls.Add(titleLbl);
+            card.Controls.Add(valueLbl);
+            card.Controls.Add(subLbl);
         }
 
         private void CreateQuickActionButtons()
@@ -175,10 +236,10 @@ namespace Restourant_Adisyon
 
             var actions = new[]
             {
-                new { Title = "⚡ Hızlı Satış (POS)", Color = AppTheme.BrandPrimary, Action = (Action)(() => formMain.Instance.AddControls(new Mmodel.frmPOS())) },
-                new { Title = "🪑 Masalar & Kroki", Color = AppTheme.Info,         Action = (Action)(() => formMain.Instance.AddControls(new Vview.frmTableView())) },
-                new { Title = "👨‍🍳 Mutfak (KDS)",    Color = AppTheme.Warning,      Action = (Action)(() => formMain.Instance.AddControls(new Vview.frmKitchenView())) },
-                new { Title = "📦 Stok & Reçete",   Color = AppTheme.Success,      Action = (Action)(() => formMain.Instance.AddControls(new frmInventory())) }
+                new { Title = "⚡ Hızlı Satış Aç (POS)", Color = AppTheme.BrandPrimary, Action = (Action)(() => formMain.Instance.AddControls(new Mmodel.frmPOS())) },
+                new { Title = "🪑 Masalar & Kroki",       Color = AppTheme.Info,         Action = (Action)(() => formMain.Instance.AddControls(new Vview.frmTableView())) },
+                new { Title = "👨‍🍳 Mutfak Ekranı (KDS)",    Color = AppTheme.Warning,      Action = (Action)(() => formMain.Instance.AddControls(new Vview.frmKitchenView())) },
+                new { Title = "📦 Stok & Reçeteler",      Color = AppTheme.Success,      Action = (Action)(() => formMain.Instance.AddControls(new frmInventory())) }
             };
 
             foreach (var act in actions)
@@ -186,7 +247,7 @@ namespace Restourant_Adisyon
                 Guna2Button btn = new Guna2Button
                 {
                     Text = act.Title,
-                    Size = new Size(160, 38),
+                    Size = new Size(168, 38),
                     Margin = new Padding(0, 0, 12, 0),
                     AutoRoundedCorners = true,
                     FillColor = act.Color,
@@ -208,8 +269,8 @@ namespace Restourant_Adisyon
             {
                 Text = "📋 " + LocalizationService.Instance.GetString("Recent_Orders"),
                 Dock = DockStyle.Top,
-                Height = 32,
-                Font = new Font("Segoe UI", 11.5F, FontStyle.Bold),
+                Height = 36,
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
                 ForeColor = AppTheme.TextPrimary,
                 TextAlign = ContentAlignment.MiddleLeft
             };
@@ -240,8 +301,8 @@ namespace Restourant_Adisyon
             {
                 Text = "🏆 " + LocalizationService.Instance.GetString("Top_Selling_Leaderboard"),
                 Dock = DockStyle.Top,
-                Height = 32,
-                Font = new Font("Segoe UI", 11.5F, FontStyle.Bold),
+                Height = 36,
+                Font = new Font("Segoe UI", 12F, FontStyle.Bold),
                 ForeColor = AppTheme.TextPrimary,
                 TextAlign = ContentAlignment.MiddleLeft
             };
@@ -276,17 +337,16 @@ namespace Restourant_Adisyon
             label4.ForeColor = AppTheme.Info;
             lblOrders.ForeColor = AppTheme.TextPrimary;
 
-            guna2Panel3.FillColor = AppTheme.CardBackground;
-            guna2Panel3.BorderColor = AppTheme.Success;
-            label6.ForeColor = AppTheme.Success;
-            lblProducts.ForeColor = AppTheme.TextPrimary;
-
             guna2Panel4.FillColor = AppTheme.CardBackground;
             guna2Panel4.BorderColor = AppTheme.Warning;
             label8.ForeColor = AppTheme.Warning;
             lblActiveTables.ForeColor = AppTheme.TextPrimary;
 
-            // Alt Paneller
+            guna2Panel3.FillColor = AppTheme.CardBackground;
+            guna2Panel3.BorderColor = AppTheme.Success;
+            label6.ForeColor = AppTheme.Success;
+            lblProducts.ForeColor = AppTheme.TextPrimary;
+
             if (_pnlRecentOrders != null)
             {
                 _pnlRecentOrders.FillColor = AppTheme.CardBackground;
@@ -308,8 +368,8 @@ namespace Restourant_Adisyon
             var loc = LocalizationService.Instance;
             if (label2 != null) label2.Text = loc.GetString("Total_Revenue");
             if (label4 != null) label4.Text = loc.GetString("Total_Orders");
-            if (label6 != null) label6.Text = loc.GetString("Nav_Products");
-            if (label8 != null) label8.Text = loc.GetString("Nav_Tables");
+            if (label6 != null) label6.Text = "Mutfak & Stok";
+            if (label8 != null) label8.Text = "Masa Doluluğu";
             CreateQuickActionButtons();
         }
 
@@ -319,11 +379,22 @@ namespace Restourant_Adisyon
             {
                 DashboardSummaryDto summary = DashboardManager.Instance.GetDashboardSummary();
 
-                // KPI Verileri
+                // KPI Değerleri
                 lblRevenue.Text      = summary.TotalRevenue.ToString("N2") + " ₺";
-                lblOrders.Text       = summary.TotalOrders.ToString();
-                lblProducts.Text     = summary.TotalProducts.ToString();
-                lblActiveTables.Text = $"{summary.ActiveTablesCount} / {summary.TotalTablesCount} (%{summary.OccupancyRate:N0})";
+                if (_lblSubRev != null)
+                    _lblSubRev.Text  = $"🟢 Bugün: {summary.TodayRevenue:N2} ₺";
+
+                lblOrders.Text       = $"{summary.TotalOrders} Sipariş";
+                if (_lblSubOrders != null)
+                    _lblSubOrders.Text = $"🟢 Bugün: {summary.TodayOrders} Adet";
+
+                lblActiveTables.Text = $"{summary.ActiveTablesCount} / {summary.TotalTablesCount} Masa";
+                if (_lblSubTables != null)
+                    _lblSubTables.Text = $"🟢 %{summary.OccupancyRate:N0} Doluluk Oranı";
+
+                lblProducts.Text     = $"{summary.TotalProducts} Çeşit";
+                if (_lblSubAlerts != null)
+                    _lblSubAlerts.Text = summary.LowStockCount > 0 ? $"⚠️ {summary.LowStockCount} Kritik Stok" : "🟢 Stoklar Yeterli";
 
                 // Son Siparişler Tablosunu Doldur
                 if (_dgvRecentOrders != null)
@@ -345,7 +416,7 @@ namespace Restourant_Adisyon
                         _dgvRecentOrders.Columns["MainID"].Visible = false;
                 }
 
-                // En Çok Satanlar Akışını Doldur
+                // En Çok Satanlar Liderlik Listesini Doldur
                 if (_flpTopProducts != null)
                 {
                     _flpTopProducts.Controls.Clear();
@@ -354,32 +425,32 @@ namespace Restourant_Adisyon
                     {
                         Guna2Panel rowPnl = new Guna2Panel
                         {
-                            Size = new Size(310, 52),
-                            BorderRadius = 10,
+                            Size = new Size(330, 56),
+                            BorderRadius = 12,
                             BorderThickness = 1,
                             BorderColor = AppTheme.BorderColor,
                             FillColor = AppTheme.Secondary,
                             Margin = new Padding(0, 0, 0, 8),
-                            Padding = new Padding(10, 8, 10, 8)
+                            Padding = new Padding(12, 8, 12, 8)
                         };
 
                         Label lblRank = new Label
                         {
                             Text = $"#{rank}",
-                            Font = new Font("Segoe UI", 10F, FontStyle.Bold),
+                            Font = new Font("Segoe UI", 11F, FontStyle.Bold),
                             ForeColor = AppTheme.BrandPrimary,
-                            Size = new Size(32, 34),
+                            Size = new Size(34, 38),
                             TextAlign = ContentAlignment.MiddleLeft,
-                            Location = new Point(8, 9)
+                            Location = new Point(8, 8)
                         };
 
                         Label lblName = new Label
                         {
                             Text = p.ProductName,
-                            Font = new Font("Segoe UI", 9.5F, FontStyle.Bold),
+                            Font = new Font("Segoe UI", 10F, FontStyle.Bold),
                             ForeColor = AppTheme.TextPrimary,
-                            Size = new Size(160, 20),
-                            Location = new Point(42, 8),
+                            Size = new Size(170, 22),
+                            Location = new Point(44, 8),
                             AutoEllipsis = true
                         };
 
@@ -388,18 +459,18 @@ namespace Restourant_Adisyon
                             Text = p.CategoryName,
                             Font = new Font("Segoe UI", 8F),
                             ForeColor = AppTheme.TextSecondary,
-                            Size = new Size(160, 16),
-                            Location = new Point(42, 28)
+                            Size = new Size(170, 16),
+                            Location = new Point(44, 30)
                         };
 
                         Label lblQty = new Label
                         {
                             Text = $"{p.TotalQuantitySold} Adet\n{p.TotalAmount:N0} ₺",
-                            Font = new Font("Segoe UI", 8.5F, FontStyle.Bold),
+                            Font = new Font("Segoe UI", 9F, FontStyle.Bold),
                             ForeColor = AppTheme.Success,
-                            Size = new Size(90, 36),
+                            Size = new Size(100, 38),
                             TextAlign = ContentAlignment.MiddleRight,
-                            Location = new Point(210, 8)
+                            Location = new Point(218, 8)
                         };
 
                         rowPnl.Controls.Add(lblRank);
@@ -415,11 +486,11 @@ namespace Restourant_Adisyon
                     {
                         Label emptyLbl = new Label
                         {
-                            Text = "Henüz satış kaydı bulunmuyor.",
+                            Text = "Henüz tamamlanmış satış kaydı bulunmuyor.",
                             ForeColor = AppTheme.TextSecondary,
-                            Font = new Font("Segoe UI", 9.5F),
+                            Font = new Font("Segoe UI", 10F),
                             AutoSize = true,
-                            Margin = new Padding(12)
+                            Margin = new Padding(14)
                         };
                         _flpTopProducts.Controls.Add(emptyLbl);
                     }
