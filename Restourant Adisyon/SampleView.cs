@@ -24,6 +24,17 @@ namespace Restourant_Adisyon
             ApplyLocalization();
 
             ApplyModernSampleViewStyle();
+
+            MainClass.EnableEnterKeyConfirmation(
+                this,
+                () =>
+                {
+                    if (txtSearch != null && (txtSearch.Focused || this.ActiveControl == txtSearch))
+                        txtSearch_TextChanged(txtSearch, EventArgs.Empty);
+                    else
+                        btnAdd_Click(this, EventArgs.Empty);
+                }
+            );
         }
 
         public virtual void ApplyTheme()

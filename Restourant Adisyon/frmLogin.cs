@@ -41,6 +41,12 @@ namespace Restourant_Adisyon
             ThemeManager.Instance.OnThemeChanged += (s, theme) => ApplyTheme();
 
             ApplyLocalization();
+
+            MainClass.EnableEnterKeyConfirmation(
+                this,
+                () => btnlogin_Click(btnlogin, EventArgs.Empty),
+                () => btnexit_Click(btnexit, EventArgs.Empty)
+            );
         }
 
         private void SetupHeaderControls()

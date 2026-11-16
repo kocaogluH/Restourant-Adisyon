@@ -35,6 +35,11 @@ namespace Restourant_Adisyon
             LoadSummaryCards();
             LoadTopProducts();
             LoadDailySales();
+
+            MainClass.EnableEnterKeyConfirmation(
+                this,
+                () => btnFilter_Click(btnFilter, EventArgs.Empty)
+            );
         }
 
         private void ApplyTheme()

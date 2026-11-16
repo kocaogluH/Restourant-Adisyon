@@ -77,6 +77,39 @@ namespace Restourant_Adisyon.Mmodel
 
             // Barkod desteği: form-level KeyPreview etkinleştir
             this.KeyPreview = true;
+
+            MainClass.EnableEnterKeyConfirmation(
+                this,
+                () =>
+                {
+                    if (txtSearch != null && (txtSearch.Focused || this.ActiveControl == txtSearch))
+                    {
+                        string q = txtSearch.Text.Trim();
+                        if (!string.IsNullOrEmpty(q))
+                        {
+                            var byBarcode = PosManager.Instance.FindProductByBarcode(q);
+                            if (byBarcode != null)
+                            {
+                                AddToCart(byBarcode.Id, byBarcode.Name, byBarcode.Price.ToString("0.00"));
+                                txtSearch.Clear();
+                                return;
+                            }
+                            foreach (Control c in ProductPanel.Controls)
+                            {
+                                if (c is ucProduct prod && prod.Visible)
+                                {
+                                    AddToCart(prod.id, prod.PName, prod.PPrice);
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                    else if (guna2DataGridView1 != null && guna2DataGridView1.Rows.Count > 0)
+                    {
+                        btnCheckout_Click(btnCheckout, EventArgs.Empty);
+                    }
+                }
+            );
         }
 
         private void SetupModernHeader()

@@ -1,10 +1,12 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SQLite;
 using System.IO;
 using System.Windows.Forms;
 using System.Drawing;
+using Guna.UI2.WinForms;
 
 namespace Restourant_Adisyon
 {
@@ -357,6 +359,94 @@ INSERT OR IGNORE INTO users (rowid, username, upass, uNAME, uRole)
             ht.Add("@barcode", barcode);
             DataTable dt = GetDataTable(qry, ht);
             return dt.Rows.Count > 0 ? dt.Rows[0] : null;
+        }
+
+        // ── Evrensel ENTER / ESC Tuşu Onay Desteği ───────────────────────────────
+        private static DateTime _lastEnterTime = DateTime.MinValue;
+        private static readonly Dictionary<Form, Action> _formEnterActions =
+            new Dictionary<Form, Action>();
+
+        /// <summary>
+        /// Form genelinde (Guna2TextBox, metin kutuları ve odaklı butonlar dahil)
+        /// ENTER tuşuna basıldığında odaklı butonu veya varsayılan onay eylemini tetikler.
+        /// </summary>
+        public static void EnableEnterKeyConfirmation(Form form, Action defaultConfirmAction = null, Action cancelAction = null)
+        {
+            if (form == null) return;
+            form.KeyPreview = true;
+            if (defaultConfirmAction != null)
+                _formEnterActions[form] = defaultConfirmAction;
+
+            form.FormClosed += (s, e) => _formEnterActions.Remove(form);
+
+            KeyEventHandler keyHandler = (s, e) =>
+            {
+                if (e.KeyCode == Keys.Enter)
+                {
+                    if ((DateTime.UtcNow - _lastEnterTime).TotalMilliseconds < 250)
+                    {
+                        e.Handled = true;
+                        e.SuppressKeyPress = true;
+                        return;
+                    }
+                    _lastEnterTime = DateTime.UtcNow;
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+
+                    Control active = form.ActiveControl;
+                    while (active is ContainerControl cc && cc.ActiveControl != null && cc.ActiveControl != active)
+                        active = cc.ActiveControl;
+
+                    if (active is Guna2Button gBtn && gBtn.Visible && gBtn.Enabled)
+                    {
+                        gBtn.PerformClick();
+                        return;
+                    }
+                    if (active is Button stdBtn && stdBtn.Visible && stdBtn.Enabled)
+                    {
+                        stdBtn.PerformClick();
+                        return;
+                    }
+
+                    defaultConfirmAction?.Invoke();
+                }
+                else if (e.KeyCode == Keys.Escape && cancelAction != null)
+                {
+                    e.Handled = true;
+                    e.SuppressKeyPress = true;
+                    cancelAction.Invoke();
+                }
+            };
+
+            BindKeyHandlerRecursive(form, keyHandler);
+        }
+
+        private static void BindKeyHandlerRecursive(Control parent, KeyEventHandler handler)
+        {
+            parent.KeyDown -= handler;
+            parent.KeyDown += handler;
+
+            parent.ControlAdded += (s, e) =>
+            {
+                if (e.Control != null)
+                    BindKeyHandlerRecursive(e.Control, handler);
+            };
+
+            foreach (Control child in parent.Controls)
+            {
+                BindKeyHandlerRecursive(child, handler);
+            }
+        }
+
+        /// <summary>
+        /// Gömülü alt form için kayıtlı varsayılan ENTER onay eylemini tetikler.
+        /// </summary>
+        public static void TriggerFormEnter(Form form)
+        {
+            if (form != null && _formEnterActions.TryGetValue(form, out Action action) && action != null)
+            {
+                action.Invoke();
+            }
         }
     }
 }

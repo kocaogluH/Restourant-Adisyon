@@ -25,7 +25,15 @@ namespace Restourant_Adisyon
             ApplyLocalization();
 
             ApplyModernSampleAddStyle();
+
+            MainClass.EnableEnterKeyConfirmation(
+                this,
+                () => OnEnterConfirm(),
+                () => btnClose_Click(btnClose, EventArgs.Empty)
+            );
         }
+
+        protected virtual void OnEnterConfirm() => btnSave_Click(btnSave, EventArgs.Empty);
 
         public virtual void ApplyTheme()
         {

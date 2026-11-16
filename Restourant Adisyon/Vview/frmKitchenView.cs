@@ -35,6 +35,8 @@ namespace Restourant_Adisyon.Vview
             _refreshTimer = new Timer { Interval = 15000 };
             _refreshTimer.Tick += (s, ev) => GetOrders();
             _refreshTimer.Start();
+
+            MainClass.EnableEnterKeyConfirmation(this, () => GetOrders());
         }
 
         private void SetupKdsHeader()

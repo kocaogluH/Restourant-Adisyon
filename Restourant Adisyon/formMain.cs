@@ -109,6 +109,15 @@ namespace Restourant_Adisyon
                 if (btnSettings != null)   btnSettings.Visible   = false;
                 ReorderVisibleButtons();
             }
+
+            MainClass.EnableEnterKeyConfirmation(
+                this,
+                () =>
+                {
+                    if (_currentChildForm != null && !_currentChildForm.IsDisposed)
+                        MainClass.TriggerFormEnter(_currentChildForm);
+                }
+            );
         }
 
         private void CleanUpLegacyControls()

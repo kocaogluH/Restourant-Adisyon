@@ -45,6 +45,12 @@ namespace Restourant_Adisyon.Mmodel
             }
 
             txtReceived.Focus();
+
+            MainClass.EnableEnterKeyConfirmation(
+                this,
+                () => btnSave_Click(btnSave, EventArgs.Empty),
+                () => this.Close()
+            );
         }
 
         private void SetupModernCheckoutUI()

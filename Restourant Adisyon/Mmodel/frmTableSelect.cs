@@ -28,8 +28,22 @@ namespace Restourant_Adisyon.Mmodel
         {
             this.BackColor = AppTheme.Background;
             this.StartPosition = FormStartPosition.CenterScreen;
-            this.KeyPreview = true;
-            this.KeyDown += (s, ev) => { if (ev.KeyCode == Keys.Escape) this.Close(); };
+
+            MainClass.EnableEnterKeyConfirmation(
+                this,
+                () =>
+                {
+                    foreach (Control c in flowLayoutPanel1.Controls)
+                    {
+                        if (c is Guna2Button b && b.Visible && b.Enabled)
+                        {
+                            b.PerformClick();
+                            break;
+                        }
+                    }
+                },
+                () => this.Close()
+            );
 
             if (pictureBox1 != null)
                 pictureBox1.Visible = false;

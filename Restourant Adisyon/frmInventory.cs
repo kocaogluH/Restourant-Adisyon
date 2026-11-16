@@ -31,6 +31,11 @@ namespace Restourant_Adisyon
 
             LoadMaterials();
             LoadProductsForRecipe();
+
+            MainClass.EnableEnterKeyConfirmation(
+                this,
+                () => btnAddMaterial_Click(btnAddMaterial, EventArgs.Empty)
+            );
         }
 
         private void ApplyTheme()

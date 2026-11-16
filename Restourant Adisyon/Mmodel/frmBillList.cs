@@ -44,6 +44,19 @@ namespace Restourant_Adisyon.Mmodel
             LoadData();
         }
 
+        protected override void OnEnterConfirm()
+        {
+            if (guna2DataGridView1 != null && guna2DataGridView1.CurrentRow != null)
+            {
+                MainID = Convert.ToInt32(guna2DataGridView1.CurrentRow.Cells["dgvid"].Value);
+                this.Close();
+            }
+            else
+            {
+                btnSave_Click(btnSave, EventArgs.Empty);
+            }
+        }
+
         private void LoadData()
         {
             string qry = @"SELECT MainID, TableName, WaiterName, orderType, status, total

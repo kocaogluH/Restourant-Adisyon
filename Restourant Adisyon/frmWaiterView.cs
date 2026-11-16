@@ -23,6 +23,8 @@ namespace Restourant_Adisyon
             LocalizationService.Instance.OnLanguageChanged += (s, ev) => GetReadyOrders();
             ThemeManager.Instance.OnThemeChanged += (s, ev) => ApplyTheme();
             GetReadyOrders();
+
+            MainClass.EnableEnterKeyConfirmation(this, () => GetReadyOrders());
         }
 
         private void ApplyTheme()
